@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Study Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+    <header>
+        <h1>Study Analytics Dashboard</h1>
+        <h2>Total Focus Time: <span id="total-time">0h 0m 0s</span></h2>
+    </header>
+
+    <main class="dashboard">
+        
+        <section class="card active-session">
+            <div class="card-header">
+                <h3>Study Queue & Timer</h3>
+                <button class="btn view-analytics" id="view-analytics-btn">📊 Data Analysis</button>
+            </div>
+            
+            <div class="add-task-container">
+                <input type="date" id="session-date">
+                
+                <input type="text" id="session-topic" list="ece-subjects" placeholder="Select or type subject...">
+                <datalist id="ece-subjects">
+                    <option value="Engineering Mathematics"></option>
+                    <option value="General Aptitude"></option>
+                    <option value="Network Theory"></option>
+                    <option value="Signals and Systems"></option>
+                    <option value="Electronic Devices (EDC)"></option>
+                    <option value="Analog Circuits"></option>
+                    <option value="Digital Circuits"></option>
+                    <option value="Control Systems"></option>
+                    <option value="Communications"></option>
+                    <option value="Electromagnetics (EMFT)"></option>
+                </datalist>
+
+                <select id="session-type">
+                    <option value="Class">📖 Class / Lecture</option>
+                    <option value="Revision">🔄 Revision</option>
+                    <option value="Practice">✍️ Practice / PYQs</option>
+                </select>
+
+                <input type="number" id="session-goal" placeholder="Hrs" min="0.5" step="0.5">
+                <button class="btn add-btn" id="add-task-btn">➕ Add</button>
+            </div>
+
+            <div class="task-queue">
+                <h4>Today's Subjects</h4>
+                <ul id="queue-list">
+                    </ul>
+            </div>
+            
+            <div class="timer-section">
+                <p class="time-display" id="current-time">00:00:00</p>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="current-progress"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn play" id="play-btn" title="Start">▶ Start</button>
+                    <button class="btn pause" id="pause-btn" title="Pause">⏸ Pause</button>
+                    <button class="btn save" id="save-btn" title="Save to Log">💾 Complete & Log</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="card analytics-card" id="analytics-section">
+            <div class="card-header">
+                <h3>Performance Analytics 📈</h3>
+            </div>
+            
+            <div class="charts-grid">
+                <div class="chart-box full-width">
+                    <h4>Daily Study Hours</h4>
+                    <div class="canvas-container" style="height: 250px;">
+                        <canvas id="dailyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h4>Time by Subject</h4>
+                    <div class="canvas-container" style="height: 220px;">
+                        <canvas id="subjectChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h4>Class vs Revision vs Practice</h4>
+                    <div class="canvas-container" style="height: 220px;">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card history-log">
+            <h3>Study History</h3>
+            <div class="table-container">
+                <table id="log-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Topic</th>
+                            <th>Goal</th>
+                            <th>Time Studied</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-body">
+                        </tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script> 
+</body>
+</html>
