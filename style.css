@@ -84,6 +84,13 @@ header h2 span { color: #38bdf8; font-weight: 600; text-shadow: 0 0 10px rgba(56
 .pause:hover { background: #f59e0b; color: white; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
 .save:hover { background: #8b5cf6; color: white; box-shadow: 0 0 15px rgba(139, 92, 246, 0.4); }
 
+/* New Edit and Reset Buttons */
+.edit { background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; }
+.edit:hover { background: #38bdf8; color: white; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+
+.reset-day { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #ef4444; width: auto; padding: 8px 15px; font-size: 14px; }
+.reset-day:hover { background: #ef4444; color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+
 /* Timer & Progress */
 .time-display { font-weight: 600; font-size: 45px; text-align: center; margin: 10px 0; color: #ffffff; letter-spacing: 2px; }
 .progress-bar-container { background-color: rgba(0, 0, 0, 0.4); height: 12px; border-radius: 10px; margin: 20px 0; width: 100%; overflow: hidden; }

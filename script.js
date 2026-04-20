@@ -1,3 +1,5 @@
+const editTimeBtn = document.getElementById('edit-time-btn');
+const resetDayBtn = document.getElementById('reset-day-btn');
 // --- DOM Elements ---
 const dateInput = document.getElementById('session-date');
 const topicInput = document.getElementById('session-topic');
@@ -216,6 +218,52 @@ function saveData() {
     localStorage.setItem('studyQueue', JSON.stringify(tasks));
     localStorage.setItem('studyHistory', JSON.stringify(completedSessions));
 }
+
+// --- 5.5 Manual Edit & Reset Logic ---
+
+// Edit Time Button
+editTimeBtn.addEventListener('click', () => {
+    if (activeTaskIndex === null) {
+        alert("Please add and select a subject from the queue first!");
+        return;
+    }
+    
+    // Ask the user for minutes (e.g., 2.5 hours = 150 minutes)
+    const currentMins = Math.floor(secondsElapsed / 60);
+    const userInput = prompt("Enter total time spent in MINUTES (e.g., for 2.5 hours enter 150):", currentMins);
+    
+    if (userInput !== null && !isNaN(userInput) && userInput >= 0) {
+        secondsElapsed = Math.floor(userInput * 60);
+        tasks[activeTaskIndex].timeSpent = secondsElapsed;
+        updateTimeDisplay();
+        saveData();
+    }
+});
+
+// Clear Today's Data Button
+resetDayBtn.addEventListener('click', () => {
+    const targetDate = dateInput.value; // Gets the date currently selected in the top input
+    
+    if (confirm(`Are you sure you want to delete all saved sessions for ${targetDate}? This will remove them from your history and charts.`)) {
+        
+        // Filter out any sessions that match the chosen date
+        completedSessions = completedSessions.filter(session => session.date !== targetDate);
+        
+        saveData(); // Update Local Storage
+        updateGrandTotal(); // Fix the top header
+        
+        // Clear the visual table and redraw it
+        logBody.innerHTML = '';
+        completedSessions.forEach(task => addSessionToTable(task));
+        
+        // If the charts are currently open, click the analytics button silently to refresh them
+        if (charts.length > 0) {
+            analyticsBtn.click();
+        }
+        
+        alert(`Data for ${targetDate} has been cleared.`);
+    }
+});
 
 // --- 6. Data Analysis (Chart.js) ---
 const analyticsBtn = document.getElementById('view-analytics-btn');
