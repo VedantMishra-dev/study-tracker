@@ -1,132 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Study Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css"> 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Study Analytics OS v2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: 'Roboto', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px;
+  }
+  h1 { text-align: center; color: #38bdf8; margin-bottom: 5px; }
+  .subtitle { text-align: center; color: #94a3b8; margin-bottom: 25px; font-size: 1.1rem; }
+  
+  .dashboard-grid {
+    display: grid; grid-template-columns: 1fr 2fr; gap: 20px; max-width: 1300px; margin: 0 auto;
+  }
+  
+  .panel {
+    background: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Controller & Inputs */
+  .control-group { margin-bottom: 15px; }
+  label { display: block; margin-bottom: 5px; color: #cbd5e1; font-weight: bold; font-size: 0.9rem; }
+  select, input[type="number"], input[type="date"] { 
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; 
+    background: #0f172a; color: white; font-size: 1rem; box-sizing: border-box;
+  }
+  
+  .timer-display {
+    font-size: 3rem; text-align: center; font-weight: bold; color: #facc15; margin: 20px 0; font-variant-numeric: tabular-nums;
+  }
+  
+  .btn-main {
+    width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 1.2rem; font-weight: bold;
+    cursor: pointer; transition: transform 0.2s; color: #000; margin-bottom: 10px;
+  }
+  .btn-start { background: #10b981; }
+  .btn-stop { background: #ef4444; color: white; display: none; }
+  .btn-manual { background: #6366f1; color: white; font-size: 1rem; padding: 10px; }
+  .btn-main:hover { transform: scale(1.02); }
+
+  /* Daily Progress Bar */
+  .progress-wrapper { margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; }
+  .progress-bar-bg { background: #334155; height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+  .progress-fill { background: linear-gradient(90deg, #38bdf8, #8b5cf6); height: 100%; width: 0%; transition: width 0.5s ease; }
+  .goal-text { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; }
+
+  /* Charts Section */
+  .charts-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+  .chart-box { background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; position: relative; height: 250px; display: flex; justify-content: center; align-items: center; }
+  .chart-box-wide { grid-column: 1 / -1; height: 300px; }
+  
+  /* History Table */
+  .history-panel { max-width: 1300px; margin: 20px auto; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; }
+  th { background: #0f172a; color: #38bdf8; }
+  tr:hover { background: #334155; }
+  .del-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+
+  /* Manual Entry Section */
+  #manualEntryForm { display: none; margin-top: 15px; padding: 15px; background: #0f172a; border-radius: 12px; border: 1px dashed #475569; }
+
+  @media (max-width: 768px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
 
-    <header>
-        <h1>Study Analytics Dashboard</h1>
-        <h2>Total Focus Time: <span id="total-time">0h 0m 0s</span></h2>
-    </header>
+<h1>Ultimate Study Analytics OS v2.0</h1>
+<div class="subtitle">Track. Analyze. Dominate.</div>
 
-    <main class="dashboard">
-        
-        <section class="card active-session">
-            <div class="card-header">
-                <h3>Study Queue & Timer</h3>
-                <button class="btn view-analytics" id="view-analytics-btn">📊 Data Analysis</button>
-            </div>
-            
-            <div class="add-task-container">
-                <input type="date" id="session-date">
-                
-                <input type="text" id="session-topic" list="ece-subjects" placeholder="Select or type subject...">
-                <datalist id="ece-subjects">
-                    <option value="Engineering Mathematics"></option>
-                    <option value="General Aptitude"></option>
-                    <option value="Network Theory"></option>
-                    <option value="Signals and Systems"></option>
-                    <option value="Electronic Devices (EDC)"></option>
-                    <option value="Analog Circuits"></option>
-                    <option value="Digital Circuits"></option>
-                    <option value="Control Systems"></option>
-                    <option value="Communications"></option>
-                    <option value="Electromagnetics (EMFT)"></option>
-                </datalist>
+<div class="dashboard-grid">
+  <div class="panel">
+    <h2 style="margin-top:0; color:#fff;">Live Tracker</h2>
+    
+    <div class="control-group">
+      <label>Subject</label>
+      <select id="subjectSelect">
+        <option value="EDC">Electronic Devices & Circuits (EDC)</option>
+        <option value="Digital">Digital Electronics</option>
+        <option value="Control">Control Systems</option>
+        <option value="Math">Engineering Math</option>
+        <option value="Apti">Aptitude</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Activity</label>
+      <select id="activitySelect">
+        <option value="Practice">Question Practice / PYQ</option>
+        <option value="Revision">Slide / Notes Revision</option>
+        <option value="Class">Class / Lecture</option>
+        <option value="Test">Mock Test</option>
+      </select>
+    </div>
+    
+    <div class="timer-display" id="timerDisplay">00:00:00</div>
+    
+    <button class="btn-main btn-start" id="startBtn" onclick="startSession()">▶ START FOCUS</button>
+    <button class="btn-main btn-stop" id="stopBtn" onclick="stopSession()">⏹ STOP & SAVE</button>
+    
+    <button class="btn-main btn-manual" onclick="toggleManualEntry()">➕ Forgot to Start Timer? Add Manually</button>
+    
+    <div id="manualEntryForm">
+      <div class="control-group"><label>Date</label><input type="date" id="manDate"></div>
+      <div class="control-group"><label>Duration (in minutes)</label><input type="number" id="manMins" placeholder="e.g., 90"></div>
+      <button class="btn-main btn-start" style="padding: 10px;" onclick="addManualSession()">Save Manual Log</button>
+    </div>
 
-                <select id="session-type">
-                    <option value="Class">📖 Class / Lecture</option>
-                    <option value="Revision">🔄 Revision</option>
-                    <option value="Practice">✍️ Practice / PYQs</option>
-                </select>
+    <div class="progress-wrapper">
+      <div class="control-group">
+        <label>Set Daily Goal (Hours)</label>
+        <input type="number" id="dailyGoalInput" value="6" min="1" onchange="updateGoal()">
+      </div>
+      <div class="goal-text">
+        <span id="todayLogged">Today: 0h 0m</span>
+        <span id="goalPercent">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-fill" id="goalProgressBar"></div>
+      </div>
+    </div>
+  </div>
 
-                <input type="number" id="session-goal" placeholder="Hrs" min="0.5" step="0.5">
-                <button class="btn add-btn" id="add-task-btn">➕ Add</button>
-            </div>
+  <div class="panel">
+    <h2 style="margin-top:0; color:#fff;">Deep Analytics Dashboard</h2>
+    <div class="charts-container">
+      <div class="chart-box chart-box-wide"><canvas id="dailyChart"></canvas></div>
+      <div class="chart-box"><canvas id="subjectChart"></canvas></div>
+      <div class="chart-box"><canvas id="activityChart"></canvas></div>
+      <div class="chart-box"><canvas id="timeOfDayChart"></canvas></div>
+      <div class="chart-box"><canvas id="cumulativeChart"></canvas></div>
+    </div>
+  </div>
+</div>
 
-            <div class="task-queue">
-                <h4>Today's Subjects</h4>
-                <ul id="queue-list">
-                    </ul>
-            </div>
-            
-            <div class="timer-section">
-                <p class="time-display" id="current-time">00:00:00</p>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="current-progress"></div>
-                </div>
+<div class="panel history-panel">
+  <h2 style="margin-top:0; color:#fff;">Session History Log</h2>
+  <div style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time Window</th>
+          <th>Subject</th>
+          <th>Activity</th>
+          <th>Duration</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="historyTableBody"></tbody>
+    </table>
+  </div>
+  <div style="margin-top: 15px; text-align: right;">
+    <button onclick="exportData()" style="background:#3b82f6; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer;">💾 Export JSON</button>
+    <button onclick="clearAllData()" style="background:#b91c1c; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer;">⚠️ Clear All Data</button>
+  </div>
+</div>
 
-                <div class="controls">
-                    <button class="btn play" id="play-btn" title="Start">▶ Start</button>
-                    <button class="btn pause" id="pause-btn" title="Pause">⏸ Pause</button>
-                    <button class="btn edit" id="edit-time-btn" title="Edit Time">✏️ Edit</button>
-                    <button class="btn save" id="save-btn" title="Save to Log">💾 Log</button>
-                </div>
-            </div>
-        </section>
+<script>
+// State Variables
+let sessions = JSON.parse(localStorage.getItem('studySessions_v2')) || [];
+let dailyGoal = parseFloat(localStorage.getItem('dailyGoal_v2')) || 6;
+document.getElementById('dailyGoalInput').value = dailyGoal;
+document.getElementById('manDate').valueAsDate = new Date();
 
-        <section class="card analytics-card" id="analytics-section">
-            <div class="card-header">
-                <h3>Performance Analytics 📈</h3>
-            </div>
-            
-            <div class="charts-grid">
-                <div class="chart-box full-width">
-                    <h4>Daily Study Hours</h4>
-                    <div class="canvas-container" style="height: 250px;">
-                        <canvas id="dailyChart"></canvas>
-                    </div>
-                </div>
+let currentSession = null;
+let timerInterval = null;
 
-                <div class="chart-box">
-                    <h4>Time by Subject</h4>
-                    <div class="canvas-container" style="height: 220px;">
-                        <canvas id="subjectChart"></canvas>
-                    </div>
-                </div>
+// Chart Instances
+let dailyChart, subjectChart, activityChart, timeOfDayChart, cumulativeChart;
 
-                <div class="chart-box">
-                    <h4>Class vs Revision vs Practice</h4>
-                    <div class="canvas-container" style="height: 220px;">
-                        <canvas id="typeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
+// Helper Functions
+function formatDuration(seconds) {
+  const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+  const s = String(seconds % 60).padStart(2, '0');
+  return `${h}:${m}:${s}`;
+}
 
-        <section class="card history-log">
-            <section class="card history-log">
-            <div class="card-header">
-                <h3>Study History</h3>
-                <button class="btn reset-day" id="reset-day-btn">🗑️ Clear Today's Data</button>
-            </div>
-            <div class="table-container">
-            <div class="table-container">
-                <table id="log-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Topic</th>
-                            <th>Goal</th>
-                            <th>Time Studied</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="log-body">
-                        </tbody>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+function formatAMPM(date) {
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; 
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  return hours + ':' + minutes + ' ' + ampm;
+}
 
-    </main>
+// Timer Logic
+function startSession() {
+  const subj = document.getElementById('subjectSelect').value;
+  const act = document.getElementById('activitySelect').value;
+  
+  currentSession = {
+    id: Date.now(),
+    subject: subj,
+    activity: act,
+    startTime: Date.now(),
+    dateStr: new Date().toLocaleDateString('en-GB')
+  };
+  
+  document.getElementById('startBtn').style.display = 'none';
+  document.getElementById('stopBtn').style.display = 'block';
+  document.getElementById('subjectSelect').disabled = true;
+  document.getElementById('activitySelect').disabled = true;
+  
+  timerInterval = setInterval(updateTimerDisplay, 1000);
+}
 
-    <script src="script.js"></script> 
+function updateTimerDisplay() {
+  const elapsed = Math.floor((Date.now() - currentSession.startTime) / 1000);
+  document.getElementById('timerDisplay').innerText = formatDuration(elapsed);
+}
+
+function stopSession() {
+  clearInterval(timerInterval);
+  const endTime = Date.now();
+  const durationSec = Math.floor((endTime - currentSession.startTime) / 1000);
+  
+  if(durationSec > 10) {
+    currentSession.endTime = endTime;
+    currentSession.duration = durationSec;
+    sessions.push(currentSession);
+    saveData();
+  }
+  
+  currentSession = null;
+  document.getElementById('timerDisplay').innerText = "00:00:00";
+  document.getElementById('startBtn').style.display = 'block';
+  document.getElementById('stopBtn').style.display = 'none';
+  document.getElementById('subjectSelect').disabled = false;
+  document.getElementById('activitySelect').disabled = false;
+  
+  updateDashboard();
+}
+
+// Manual Entry Logic
+function toggleManualEntry() {
+  const form = document.getElementById('manualEntryForm');
+  form.style.display = form.style.display === 'block' ? 'none' : 'block';
+}
+
+function addManualSession() {
+  const subj = document.getElementById('subjectSelect').value;
+  const act = document.getElementById('activitySelect').value;
+  const dateVal = document.getElementById('manDate').value;
+  const mins = parseInt(document.getElementById('manMins').value);
+
+  if(!dateVal || isNaN(mins) || mins <= 0) {
+    alert("Please enter a valid date and minutes.");
+    return;
+  }
+
+  const [year, month, day] = dateVal.split('-');
+  const formattedDate = `${day}/${month}/${year}`;
+  
+  // Fake start/end times for chart sorting purposes (set to noon)
+  const fakeStartTime = new Date(year, month-1, day, 12, 0, 0).getTime();
+
+  sessions.push({
+    id: Date.now(),
+    subject: subj,
+    activity: act,
+    startTime: fakeStartTime,
+    endTime: fakeStartTime + (mins * 60 * 1000),
+    duration: mins * 60,
+    dateStr: formattedDate,
+    isManual: true
+  });
+
+  saveData();
+  updateDashboard();
+  document.getElementById('manMins').value = '';
+  toggleManualEntry();
+}
+
+// Goal Logic
+function updateGoal() {
+  dailyGoal = parseFloat(document.getElementById('dailyGoalInput').value) || 6;
+  localStorage.setItem('dailyGoal_v2', dailyGoal);
+  updateDashboard();
+}
+
+function deleteSession(id) {
+  if(confirm("Delete this session record?")) {
+    sessions = sessions.filter(s => s.id !== id);
+    saveData();
+    updateDashboard();
+  }
+}
+
+function saveData() { localStorage.setItem('studySessions_v2', JSON.stringify(sessions)); }
+
+function clearAllData() {
+  if(confirm("Are you sure? This deletes ALL history forever!")) {
+    sessions = []; saveData(); updateDashboard();
+  }
+}
+
+function exportData() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sessions));
+  const dlAnchor = document.createElement('a'); 
+  dlAnchor.setAttribute("href", dataStr); dlAnchor.setAttribute("download", "study_analytics_v2.json"); dlAnchor.click();
+}
+
+// UI & Chart Updates
+Chart.defaults.color = '#cbd5e1';
+Chart.defaults.maintainAspectRatio = false;
+
+function updateDashboard() {
+  renderTable();
+  renderCharts();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('historyTableBody');
+  tbody.innerHTML = '';
+  const sorted = [...sessions].sort((a,b) => b.startTime - a.startTime);
+  
+  let todayTotalSec = 0;
+  const todayStr = new Date().toLocaleDateString('en-GB');
+
+  sorted.forEach(s => {
+    if(s.dateStr === todayStr) todayTotalSec += s.duration;
+
+    const tr = document.createElement('tr');
+    const startStr = s.isManual ? "Manual Log" : formatAMPM(new Date(s.startTime));
+    const endStr = s.isManual ? "" : " - " + formatAMPM(new Date(s.endTime));
+    
+    tr.innerHTML = `
+      <td>${s.dateStr}</td>
+      <td>${startStr}${endStr}</td>
+      <td><strong>${s.subject}</strong></td>
+      <td>${s.activity}</td>
+      <td>${Math.round(s.duration/60)} mins</td>
+      <td><button class="del-btn" onclick="deleteSession(${s.id})">Del</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Update Progress Bar
+  const todayHrs = todayTotalSec / 3600;
+  const percent = Math.min((todayHrs / dailyGoal) * 100, 100);
+  document.getElementById('todayLogged').innerText = `Today: ${Math.floor(todayHrs)}h ${Math.floor((todayHrs%1)*60)}m`;
+  document.getElementById('goalPercent').innerText = `${Math.round(percent)}%`;
+  document.getElementById('goalProgressBar').style.width = `${percent}%`;
+}
+
+function renderCharts() {
+  let dailyData = {}; let subjData = {}; let actData = {};
+  let timeOfDayData = { Morning: 0, Afternoon: 0, Evening: 0, Night: 0 };
+  
+  // Sort sessions chronologically for cumulative
+  const chrono = [...sessions].sort((a,b) => a.startTime - b.startTime);
+  
+  chrono.forEach(s => {
+    const hrs = s.duration / 3600;
+    dailyData[s.dateStr] = (dailyData[s.dateStr] || 0) + hrs;
+    subjData[s.subject] = (subjData[s.subject] || 0) + hrs;
+    actData[s.activity] = (actData[s.activity] || 0) + hrs;
+
+    // Time of Day Logic (Morning 5-12, Afternoon 12-17, Evening 17-21, Night 21-5)
+    if(!s.isManual) {
+      const hour = new Date(s.startTime).getHours();
+      if(hour >= 5 && hour < 12) timeOfDayData.Morning += hrs;
+      else if(hour >= 12 && hour < 17) timeOfDayData.Afternoon += hrs;
+      else if(hour >= 17 && hour < 21) timeOfDayData.Evening += hrs;
+      else timeOfDayData.Night += hrs;
+    }
+  });
+
+  const last7Dates = Object.keys(dailyData).slice(-7);
+  const last7Values = Object.values(dailyData).slice(-7);
+
+  // Cumulative Logic
+  let cumulativeValues = [];
+  let sum = 0;
+  last7Values.forEach(val => { sum += val; cumulativeValues.push(sum); });
+
+  // 1. Daily Bar Chart
+  const ctxDaily = document.getElementById('dailyChart').getContext('2d');
+  if(dailyChart) dailyChart.destroy();
+  dailyChart = new Chart(ctxDaily, {
+    type: 'bar',
+    data: { labels: last7Dates, datasets: [{ label: 'Hours', data: last7Values, backgroundColor: '#38bdf8', borderRadius: 4 }] },
+    options: { plugins: { title: { display: true, text: 'Daily Output Trend' } } }
+  });
+
+  // 2. Subject Pie Chart
+  const ctxSubj = document.getElementById('subjectChart').getContext('2d');
+  if(subjectChart) subjectChart.destroy();
+  subjectChart = new Chart(ctxSubj, {
+    type: 'pie',
+    data: { labels: Object.keys(subjData), datasets: [{ data: Object.values(subjData), backgroundColor: ['#f43f5e', '#8b5cf6', '#10b981', '#f59e0b', '#3b82f6'] }] },
+    options: { plugins: { title: { display: true, text: 'Subject Focus' } } }
+  });
+
+  // 3. Activity Doughnut Chart
+  const ctxAct = document.getElementById('activityChart').getContext('2d');
+  if(activityChart) activityChart.destroy();
+  activityChart = new Chart(ctxAct, {
+    type: 'doughnut',
+    data: { labels: Object.keys(actData), datasets: [{ data: Object.values(actData), backgroundColor: ['#10b981', '#3b82f6', '#64748b', '#facc15'] }] },
+    options: { plugins: { title: { display: true, text: 'Quality of Study' } }, cutout: '60%' }
+  });
+
+  // 4. Time of Day Radar Chart
+  const ctxTime = document.getElementById('timeOfDayChart').getContext('2d');
+  if(timeOfDayChart) timeOfDayChart.destroy();
+  timeOfDayChart = new Chart(ctxTime, {
+    type: 'polarArea',
+    data: { labels: Object.keys(timeOfDayData), datasets: [{ data: Object.values(timeOfDayData), backgroundColor: ['rgba(250, 204, 21, 0.6)', 'rgba(56, 189, 248, 0.6)', 'rgba(139, 92, 246, 0.6)', 'rgba(15, 23, 42, 0.6)'] }] },
+    options: { plugins: { title: { display: true, text: 'Peak Output Zones' } } }
+  });
+
+  // 5. Cumulative Line Chart
+  const ctxCumul = document.getElementById('cumulativeChart').getContext('2d');
+  if(cumulativeChart) cumulativeChart.destroy();
+  cumulativeChart = new Chart(ctxCumul, {
+    type: 'line',
+    data: { labels: last7Dates, datasets: [{ label: 'Total Hours Built', data: cumulativeValues, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] },
+    options: { plugins: { title: { display: true, text: '7-Day Burn-Up Chart' } } }
+  });
+}
+
+// Initialize
+updateDashboard();
+</script>
+
 </body>
 </html>
