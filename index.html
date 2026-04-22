@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study Analytics OS v2.0</title>
+<title>Ultimate Study Analytics OS v2.1 (Weekly Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -53,6 +53,17 @@
   .chart-box { background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; position: relative; height: 250px; display: flex; justify-content: center; align-items: center; }
   .chart-box-wide { grid-column: 1 / -1; height: 300px; }
   
+  /* Weekly Summary Section */
+  .weekly-panel { max-width: 1300px; margin: 20px auto; }
+  .weekly-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
+  .week-card { background: #334155; padding: 15px 20px; border-radius: 12px; min-width: 150px; text-align: center; border: 1px solid #475569; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
+  .week-card h3 { margin: 0 0 10px 0; color: #38bdf8; font-size: 1.2rem; }
+  .week-card p { margin: 0; font-size: 1.5rem; font-weight: bold; color: #facc15; }
+  /* Custom Scrollbar for Weekly Grid */
+  .weekly-grid::-webkit-scrollbar { height: 8px; }
+  .weekly-grid::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
+  .weekly-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
   /* History Table */
   .history-panel { max-width: 1300px; margin: 20px auto; }
   table { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -71,7 +82,7 @@
 </head>
 <body>
 
-<h1>Ultimate Study Analytics OS v2.0</h1>
+<h1>Ultimate Study Analytics OS v2.1</h1>
 <div class="subtitle">Track. Analyze. Dominate.</div>
 
 <div class="dashboard-grid">
@@ -138,6 +149,12 @@
   </div>
 </div>
 
+<div class="panel weekly-panel">
+  <h2 style="margin-top:0; color:#fff;">Weekly Milestones (Your Prep Journey)</h2>
+  <div class="weekly-grid" id="weeklyGrid">
+    </div>
+</div>
+
 <div class="panel history-panel">
   <h2 style="margin-top:0; color:#fff;">Session History Log</h2>
   <div style="overflow-x: auto;">
@@ -162,7 +179,7 @@
 </div>
 
 <script>
-// State Variables
+// State Variables (Reading exactly from the same v2 key so NO DATA IS LOST)
 let sessions = JSON.parse(localStorage.getItem('studySessions_v2')) || [];
 let dailyGoal = parseFloat(localStorage.getItem('dailyGoal_v2')) || 6;
 document.getElementById('dailyGoalInput').value = dailyGoal;
@@ -260,7 +277,6 @@ function addManualSession() {
   const [year, month, day] = dateVal.split('-');
   const formattedDate = `${day}/${month}/${year}`;
   
-  // Fake start/end times for chart sorting purposes (set to noon)
   const fakeStartTime = new Date(year, month-1, day, 12, 0, 0).getTime();
 
   sessions.push({
@@ -315,7 +331,42 @@ Chart.defaults.maintainAspectRatio = false;
 
 function updateDashboard() {
   renderTable();
+  renderWeeklySummary();
   renderCharts();
+}
+
+// NEW: Weekly Summary Logic
+function renderWeeklySummary() {
+  const grid = document.getElementById('weeklyGrid');
+  grid.innerHTML = '';
+  
+  if(sessions.length === 0) {
+    grid.innerHTML = '<p style="color:#94a3b8; font-style:italic;">No data yet. Start tracking to see your weekly progress build up!</p>';
+    return;
+  }
+
+  // Find the very first session date to treat as "Start of Prep"
+  const firstSessionTime = Math.min(...sessions.map(s => s.startTime));
+  let weeklyData = {};
+
+  sessions.forEach(s => {
+    // Calculate week number (1 week = 7 * 24 * 60 * 60 * 1000 ms)
+    const msSinceStart = s.startTime - firstSessionTime;
+    const weekNum = Math.floor(msSinceStart / (7 * 24 * 60 * 60 * 1000)) + 1;
+    weeklyData[weekNum] = (weeklyData[weekNum] || 0) + s.duration;
+  });
+
+  // Render cards sorted by week number
+  Object.keys(weeklyData).sort((a,b) => a - b).forEach(week => {
+    const totalHrs = weeklyData[week] / 3600;
+    const card = document.createElement('div');
+    card.className = 'week-card';
+    card.innerHTML = `
+      <h3>Week ${week}</h3>
+      <p>${Math.floor(totalHrs)}h ${Math.round((totalHrs % 1) * 60)}m</p>
+    `;
+    grid.appendChild(card);
+  });
 }
 
 function renderTable() {
@@ -356,7 +407,6 @@ function renderCharts() {
   let dailyData = {}; let subjData = {}; let actData = {};
   let timeOfDayData = { Morning: 0, Afternoon: 0, Evening: 0, Night: 0 };
   
-  // Sort sessions chronologically for cumulative
   const chrono = [...sessions].sort((a,b) => a.startTime - b.startTime);
   
   chrono.forEach(s => {
@@ -365,7 +415,6 @@ function renderCharts() {
     subjData[s.subject] = (subjData[s.subject] || 0) + hrs;
     actData[s.activity] = (actData[s.activity] || 0) + hrs;
 
-    // Time of Day Logic (Morning 5-12, Afternoon 12-17, Evening 17-21, Night 21-5)
     if(!s.isManual) {
       const hour = new Date(s.startTime).getHours();
       if(hour >= 5 && hour < 12) timeOfDayData.Morning += hrs;
@@ -378,12 +427,10 @@ function renderCharts() {
   const last7Dates = Object.keys(dailyData).slice(-7);
   const last7Values = Object.values(dailyData).slice(-7);
 
-  // Cumulative Logic
   let cumulativeValues = [];
   let sum = 0;
   last7Values.forEach(val => { sum += val; cumulativeValues.push(sum); });
 
-  // 1. Daily Bar Chart
   const ctxDaily = document.getElementById('dailyChart').getContext('2d');
   if(dailyChart) dailyChart.destroy();
   dailyChart = new Chart(ctxDaily, {
@@ -392,7 +439,6 @@ function renderCharts() {
     options: { plugins: { title: { display: true, text: 'Daily Output Trend' } } }
   });
 
-  // 2. Subject Pie Chart
   const ctxSubj = document.getElementById('subjectChart').getContext('2d');
   if(subjectChart) subjectChart.destroy();
   subjectChart = new Chart(ctxSubj, {
@@ -401,7 +447,6 @@ function renderCharts() {
     options: { plugins: { title: { display: true, text: 'Subject Focus' } } }
   });
 
-  // 3. Activity Doughnut Chart
   const ctxAct = document.getElementById('activityChart').getContext('2d');
   if(activityChart) activityChart.destroy();
   activityChart = new Chart(ctxAct, {
@@ -410,7 +455,6 @@ function renderCharts() {
     options: { plugins: { title: { display: true, text: 'Quality of Study' } }, cutout: '60%' }
   });
 
-  // 4. Time of Day Radar Chart
   const ctxTime = document.getElementById('timeOfDayChart').getContext('2d');
   if(timeOfDayChart) timeOfDayChart.destroy();
   timeOfDayChart = new Chart(ctxTime, {
@@ -419,7 +463,6 @@ function renderCharts() {
     options: { plugins: { title: { display: true, text: 'Peak Output Zones' } } }
   });
 
-  // 5. Cumulative Line Chart
   const ctxCumul = document.getElementById('cumulativeChart').getContext('2d');
   if(cumulativeChart) cumulativeChart.destroy();
   cumulativeChart = new Chart(ctxCumul, {
