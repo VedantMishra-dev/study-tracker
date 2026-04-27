@@ -3,85 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study Analytics OS v3.0 (Syllabus & 10Q Edition)</title>
+<title>Ultimate Study OS v4.0 (God-Mode Tracker)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  body {
-    font-family: 'Roboto', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px;
-  }
+  body { font-family: 'Roboto', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
   h1 { text-align: center; color: #38bdf8; margin-bottom: 5px; }
   .subtitle { text-align: center; color: #94a3b8; margin-bottom: 25px; font-size: 1.1rem; }
   
-  .dashboard-grid {
-    display: grid; grid-template-columns: 1fr 2fr; gap: 20px; max-width: 1400px; margin: 0 auto;
-  }
+  .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; max-width: 1400px; margin: 0 auto 20px auto; }
+  .panel { background: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); max-width: 1400px; margin: 0 auto 20px auto; }
   
-  .panel {
-    background: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-    margin-bottom: 20px; max-width: 1400px; margin-left: auto; margin-right: auto;
-  }
-  
-  /* Controller & Inputs */
+  /* Inputs & Controls */
   .control-group { margin-bottom: 15px; }
   label { display: block; margin-bottom: 5px; color: #cbd5e1; font-weight: bold; font-size: 0.9rem; }
-  select, input[type="number"], input[type="date"], input[type="text"] { 
-    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; 
-    background: #0f172a; color: white; font-size: 1rem; box-sizing: border-box;
+  select, input[type="text"], input[type="number"], input[type="date"] { 
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 1rem; box-sizing: border-box;
   }
   
-  .timer-display {
-    font-size: 3rem; text-align: center; font-weight: bold; color: #facc15; margin: 20px 0; font-variant-numeric: tabular-nums;
-  }
+  .timer-display { font-size: 3rem; text-align: center; font-weight: bold; color: #facc15; margin: 20px 0; font-variant-numeric: tabular-nums; }
   
-  .btn-main {
-    width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 1.2rem; font-weight: bold;
-    cursor: pointer; transition: transform 0.2s; color: #000; margin-bottom: 10px;
-  }
-  .btn-start { background: #10b981; }
-  .btn-stop { background: #ef4444; color: white; display: none; }
+  .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: transform 0.2s; color: #000; margin-bottom: 10px; }
+  .btn-start { background: #10b981; } .btn-stop { background: #ef4444; color: white; display: none; }
   .btn-manual { background: #6366f1; color: white; font-size: 1rem; padding: 10px; }
-  .btn-small { background: #38bdf8; color: black; font-size: 0.9rem; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;}
+  .btn-small { background: #38bdf8; color: #000; padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; white-space: nowrap;}
   .btn-main:hover, .btn-small:hover { transform: scale(1.02); }
 
-  /* Charts Section */
+  /* 10Q Grid */
+  .q10-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 15px;}
+  .q10-btn { background: #0f172a; color: #94a3b8; border: 2px solid #334155; border-radius: 8px; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; font-size: 0.9rem;}
+  .q10-btn.active { background: #10b981; color: #fff; border-color: #059669; }
+
+  /* Subtopic Builder UI */
+  .builder-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;}
+  .chapter-block { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+  .chapter-title { color: #facc15; font-size: 1.1rem; margin-top: 0; margin-bottom: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 5px;}
+  .chapter-title button { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;}
+  .pill-container { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { background: #334155; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; color: #cbd5e1; display: flex; align-items: center; gap: 8px; border: 1px solid #475569;}
+  .pill span { cursor: pointer; color: #ef4444; font-weight: bold; font-size: 1rem;}
+
+  /* Progress Bar */
+  .progress-wrapper { margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; }
+  .progress-bar-bg { background: #334155; height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+  .progress-fill { background: linear-gradient(90deg, #38bdf8, #8b5cf6); height: 100%; width: 0%; transition: width 0.5s ease; }
+  .goal-text { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; }
+
+  /* Charts */
   .charts-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
   .chart-box { background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; position: relative; height: 250px; display: flex; justify-content: center; align-items: center; }
   .chart-box-wide { grid-column: 1 / -1; height: 300px; }
   .chart-box-full { height: 400px; width: 100%; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; box-sizing: border-box;}
   
-  /* Weekly Summary Section */
+  /* Weekly Grid */
   .weekly-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
-  .week-card { background: #334155; padding: 15px 20px; border-radius: 12px; min-width: 150px; text-align: center; border: 1px solid #475569; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
+  .week-card { background: #334155; padding: 15px 20px; border-radius: 12px; min-width: 150px; text-align: center; border: 1px solid #475569; }
   .week-card h3 { margin: 0 0 10px 0; color: #38bdf8; font-size: 1.2rem; }
   .week-card p { margin: 0; font-size: 1.5rem; font-weight: bold; color: #facc15; }
+  .weekly-grid::-webkit-scrollbar { height: 8px; } .weekly-grid::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; } .weekly-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 
-  /* 10Q Checkboxes */
-  .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
-  .check-item { background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #475569; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .check-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
-
-  /* History Table */
+  /* Table */
   table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-  th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; font-size: 0.95rem; }
+  th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; font-size: 0.9rem;}
   th { background: #0f172a; color: #38bdf8; }
   tr:hover { background: #334155; }
   .del-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
 
-  /* Syllabus Manager */
-  .syllabus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; }
-
   #manualEntryForm { display: none; margin-top: 15px; padding: 15px; background: #0f172a; border-radius: 12px; border: 1px dashed #475569; }
-
-  @media (max-width: 768px) {
-    .dashboard-grid, .syllabus-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 768px) { .dashboard-grid, .builder-row { flex-direction: column; } .dashboard-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<h1>Ultimate Study Analytics OS v3.0</h1>
-<div class="subtitle">Syllabus Mapping | 10Q Tracker | Master Analytics</div>
+<h1>Ultimate Study OS v4.0</h1>
+<div class="subtitle">3-Tier Mastery Tracker (Subject ➔ Chapter ➔ Topic)</div>
+
+<div class="dashboard-grid">
+  <div class="panel" style="margin-bottom: 0;">
+    <h2 style="margin-top:0; color:#10b981;">Daily 10-Q Attack</h2>
+    <p style="font-size: 0.85rem; color:#94a3b8;">Mark 10+ questions solved per subject. Select date to edit past.</p>
+    <div class="control-group"><input type="date" id="q10Date" onchange="render10QGrid()"></div>
+    <div class="q10-grid" id="q10Grid"></div>
+  </div>
+
+  <div class="panel" style="margin-bottom: 0;">
+    <h2 style="margin-top:0; color:#8b5cf6;">Syllabus Builder (Subject ➔ Chapter ➔ Topic)</h2>
+    <div class="builder-row">
+      <div style="flex:1;">
+        <label>Subject</label>
+        <select id="manageSubjectSelect" onchange="renderBuilderUI()"></select>
+      </div>
+      <div style="flex:1;">
+        <label>Chapter (Select or Type New)</label>
+        <input type="text" id="chapterInput" list="chapterList" placeholder="e.g., Combinational Logic">
+        <datalist id="chapterList"></datalist>
+      </div>
+      <div style="flex:1;">
+        <label>Topic</label>
+        <input type="text" id="topicInput" placeholder="e.g., Multiplexers">
+      </div>
+      <div>
+        <button class="btn-small" onclick="addSyllabusNode()">+ Add</button>
+      </div>
+    </div>
+    <div id="syllabusContainer" style="margin-top: 20px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
+  </div>
+</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
@@ -89,22 +116,18 @@
     
     <div class="control-group">
       <label>Subject</label>
-      <select id="subjectSelect" onchange="populateTrackerChapters()"></select>
+      <select id="subjectSelect" onchange="updateTrackerChapters()"></select>
     </div>
     <div class="control-group">
       <label>Chapter</label>
-      <select id="chapterSelect" onchange="populateTrackerSubtopics()">
-        <option value="General">General / Full Subject</option>
-      </select>
+      <select id="chapterSelect" onchange="updateTrackerTopics()"></select>
     </div>
     <div class="control-group">
-      <label>Subtopic</label>
-      <select id="subtopicSelect">
-        <option value="General">General / All</option>
-      </select>
+      <label>Topic</label>
+      <select id="topicSelect"></select>
     </div>
     <div class="control-group">
-      <label>Activity Type</label>
+      <label>Activity</label>
       <select id="activitySelect">
         <option value="Practice">Question Practice / PYQ</option>
         <option value="Revision">Slide / Notes Revision</option>
@@ -118,239 +141,25 @@
     <button class="btn-main btn-start" id="startBtn" onclick="startSession()">▶ START FOCUS</button>
     <button class="btn-main btn-stop" id="stopBtn" onclick="stopSession()">⏹ STOP & SAVE</button>
     
-    <button class="btn-main btn-manual" onclick="toggleManualEntry()">➕ Add Manual Session</button>
-    
+    <button class="btn-main btn-manual" onclick="toggleManualEntry()">➕ Forgot Timer? Add Manually</button>
     <div id="manualEntryForm">
+      <p style="font-size: 0.85rem; color:#94a3b8;">Uses the Subject, Chapter, Topic & Activity selected above.</p>
       <div class="control-group"><label>Date</label><input type="date" id="manDate"></div>
-      <div class="control-group"><label>Duration (Mins)</label><input type="number" id="manMins" placeholder="e.g., 90"></div>
+      <div class="control-group"><label>Duration (in minutes)</label><input type="number" id="manMins" placeholder="e.g., 90"></div>
       <button class="btn-main btn-start" style="padding: 10px;" onclick="addManualSession()">Save Manual Log</button>
+    </div>
+
+    <div class="progress-wrapper">
+      <div class="control-group"><label>Set Daily Goal (Hours)</label><input type="number" id="dailyGoalInput" min="1" onchange="updateGoal()"></div>
+      <div class="goal-text"><span id="todayLogged">Today: 0h 0m</span><span id="goalPercent">0%</span></div>
+      <div class="progress-bar-bg"><div class="progress-fill" id="goalProgressBar"></div></div>
     </div>
   </div>
 
   <div class="panel" style="margin-bottom: 0;">
-    <h2 style="margin-top:0; color:#fff;">Core Dashboard</h2>
+    <h2 style="margin-top:0; color:#fff;">Deep Analytics Dashboard</h2>
     <div class="charts-container">
       <div class="chart-box chart-box-wide"><canvas id="dailyChart"></canvas></div>
+      <div class="chart-box chart-box-wide"><canvas id="q10Chart"></canvas></div>
       <div class="chart-box"><canvas id="subjectChart"></canvas></div>
-      <div class="chart-box"><canvas id="subtopicChart"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<div class="panel" style="margin-top: 20px;">
-  <h2 style="margin-top:0; color:#facc15;">🔥 10Q Daily Practice Challenge</h2>
-  <p style="color:#94a3b8; font-size:0.9rem;">Select Date to View/Edit Ticks. Minimum 10 Quality Questions per ticked subject.</p>
-  
-  <div class="control-group" style="max-width: 300px;">
-    <label>Select Date to Track/Edit</label>
-    <input type="date" id="qDate" onchange="load10QData()">
-  </div>
-  
-  <div class="checkbox-grid" id="qCheckboxGrid">
-    </div>
-  
-  <div class="chart-box-wide" style="margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155;">
-    <canvas id="qChart"></canvas>
-  </div>
-</div>
-
-<div class="panel">
-  <h2 style="margin-top:0; color:#fff;">⚙️ Micro-Syllabus Builder</h2>
-  <p style="color:#94a3b8; font-size:0.9rem;">Create your chapters and subtopics here to track them in the timer.</p>
-  
-  <div class="syllabus-grid">
-    <div>
-      <div class="control-group">
-        <label>Subject</label>
-        <select id="sylSubjectSelect" onchange="loadSylChapters()"></select>
-      </div>
-      <div class="control-group">
-        <label>Add New Chapter</label>
-        <input type="text" id="newChapterInput" placeholder="e.g., Semiconductor Physics">
-        <button class="btn-small" style="margin-top:5px; width:100%;" onclick="addChapter()">+ Add Chapter</button>
-      </div>
-    </div>
-    <div>
-      <div class="control-group">
-        <label>Select Chapter</label>
-        <select id="sylChapterSelect"></select>
-      </div>
-      <div class="control-group">
-        <label>Add New Subtopic</label>
-        <input type="text" id="newSubtopicInput" placeholder="e.g., Fermi Level">
-        <button class="btn-small" style="margin-top:5px; width:100%;" onclick="addSubtopic()">+ Add Subtopic</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="panel">
-  <h2 style="margin-top:0; color:#fff;">Long-Term Master Trend (Goal vs Actual)</h2>
-  <div class="chart-box-full">
-    <canvas id="longTermChart"></canvas>
-  </div>
-</div>
-
-<div class="panel">
-  <h2 style="margin-top:0; color:#fff;">Weekly Milestones</h2>
-  <div class="weekly-grid" id="weeklyGrid"></div>
-</div>
-
-<div class="panel">
-  <h2 style="margin-top:0; color:#fff;">Session History Log</h2>
-  <div style="overflow-x: auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Subject</th>
-          <th>Chapter > Subtopic</th>
-          <th>Activity</th>
-          <th>Duration</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="historyTableBody"></tbody>
-    </table>
-  </div>
-</div>
-
-<script>
-// --- CORE DATA & GATE ECE SUBJECTS ---
-const gateSubjects = [
-  "Networks", "Signals & Systems", "Electronic Devices (EDC)", 
-  "Analog Circuits", "Digital Circuits", "Control Systems", 
-  "Communications", "Electromagnetics (EMT)", "Engineering Math", "Aptitude"
-];
-
-let sessions = JSON.parse(localStorage.getItem('studySessions_v2')) || [];
-let dailyGoal = parseFloat(localStorage.getItem('dailyGoal_v2')) || 6;
-let syllabus = JSON.parse(localStorage.getItem('syllabus_v3')) || {};
-let dailyTicks = JSON.parse(localStorage.getItem('dailyTicks_v3')) || {};
-
-// Initialize missing subjects in syllabus
-gateSubjects.forEach(sub => { if(!syllabus[sub]) syllabus[sub] = {}; });
-saveSyllabus();
-
-// UI Init Dates
-document.getElementById('manDate').valueAsDate = new Date();
-document.getElementById('qDate').valueAsDate = new Date();
-
-let currentSession = null;
-let timerInterval = null;
-
-// Chart Instances
-let dailyChart, subjectChart, subtopicChart, longTermChart, qChart;
-
-// --- INITIALIZATION ---
-function init() {
-  populateSubjectDropdowns();
-  loadSylChapters();
-  populateTrackerChapters();
-  load10QData();
-  updateDashboard();
-}
-
-function populateSubjectDropdowns() {
-  const tSel = document.getElementById('subjectSelect');
-  const sSel = document.getElementById('sylSubjectSelect');
-  tSel.innerHTML = ''; sSel.innerHTML = '';
-  gateSubjects.forEach(sub => {
-    tSel.innerHTML += `<option value="${sub}">${sub}</option>`;
-    sSel.innerHTML += `<option value="${sub}">${sub}</option>`;
-  });
-}
-
-// --- SYLLABUS MANAGER LOGIC ---
-function saveSyllabus() { localStorage.setItem('syllabus_v3', JSON.stringify(syllabus)); }
-
-function loadSylChapters() {
-  const subj = document.getElementById('sylSubjectSelect').value;
-  const cSel = document.getElementById('sylChapterSelect');
-  cSel.innerHTML = '';
-  const chapters = Object.keys(syllabus[subj] || {});
-  if(chapters.length === 0) cSel.innerHTML = '<option disabled>No Chapters Added</option>';
-  else chapters.forEach(ch => cSel.innerHTML += `<option value="${ch}">${ch}</option>`);
-}
-
-function addChapter() {
-  const subj = document.getElementById('sylSubjectSelect').value;
-  const chapter = document.getElementById('newChapterInput').value.trim();
-  if(chapter && !syllabus[subj][chapter]) {
-    syllabus[subj][chapter] = [];
-    saveSyllabus();
-    document.getElementById('newChapterInput').value = '';
-    loadSylChapters();
-    populateTrackerChapters(); // Update live tracker UI
-  }
-}
-
-function addSubtopic() {
-  const subj = document.getElementById('sylSubjectSelect').value;
-  const chapter = document.getElementById('sylChapterSelect').value;
-  const subtopic = document.getElementById('newSubtopicInput').value.trim();
-  if(chapter && subtopic && !syllabus[subj][chapter].includes(subtopic)) {
-    syllabus[subj][chapter].push(subtopic);
-    saveSyllabus();
-    document.getElementById('newSubtopicInput').value = '';
-    populateTrackerSubtopics(); // Update live tracker UI
-    alert(`Subtopic added to ${chapter}`);
-  }
-}
-
-// --- LIVE TRACKER DROPDOWNS ---
-function populateTrackerChapters() {
-  const subj = document.getElementById('subjectSelect').value;
-  const cSel = document.getElementById('chapterSelect');
-  cSel.innerHTML = '<option value="General">General / Full Subject</option>';
-  Object.keys(syllabus[subj] || {}).forEach(ch => {
-    cSel.innerHTML += `<option value="${ch}">${ch}</option>`;
-  });
-  populateTrackerSubtopics();
-}
-
-function populateTrackerSubtopics() {
-  const subj = document.getElementById('subjectSelect').value;
-  const chapter = document.getElementById('chapterSelect').value;
-  const sSel = document.getElementById('subtopicSelect');
-  sSel.innerHTML = '<option value="General">General / All</option>';
-  if(chapter !== "General" && syllabus[subj][chapter]) {
-    syllabus[subj][chapter].forEach(subT => {
-      sSel.innerHTML += `<option value="${subT}">${subT}</option>`;
-    });
-  }
-}
-
-// --- 10Q TRACKER LOGIC ---
-function load10QData() {
-  const dateStr = document.getElementById('qDate').value;
-  if(!dateStr) return;
-  const [y, m, d] = dateStr.split('-');
-  const formattedDate = `${d}/${m}/${y}`; // DD/MM/YYYY
-  
-  if(!dailyTicks[formattedDate]) dailyTicks[formattedDate] = {};
-  
-  const container = document.getElementById('qCheckboxGrid');
-  container.innerHTML = '';
-  
-  gateSubjects.forEach(sub => {
-    const isChecked = dailyTicks[formattedDate][sub] ? 'checked' : '';
-    container.innerHTML += `
-      <label class="check-item">
-        <input type="checkbox" onchange="update10Q('${formattedDate}', '${sub}', this.checked)" ${isChecked}>
-        ${sub.replace(/ *\([^)]*\) */g, "")} </label>
-    `;
-  });
-  render10QChart();
-}
-
-function update10Q(date, subject, isChecked) {
-  dailyTicks[date][subject] = isChecked;
-  localStorage.setItem('dailyTicks_v3', JSON.stringify(dailyTicks));
-  render10QChart();
-}
-
-// --- HELPER FUNCTIONS ---
-function formatDuration(sec) {
-  const h = String(Math.floor(sec / 360
+      <div class="chart-box"><canvas id="activityChart"></canvas></div>
