@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study Analytics OS v2.2 (Master Trend Edition)</title>
+<title>Ultimate Study Analytics OS v3.0 (Syllabus & 10Q Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -14,18 +14,18 @@
   .subtitle { text-align: center; color: #94a3b8; margin-bottom: 25px; font-size: 1.1rem; }
   
   .dashboard-grid {
-    display: grid; grid-template-columns: 1fr 2fr; gap: 20px; max-width: 1300px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 2fr; gap: 20px; max-width: 1400px; margin: 0 auto;
   }
   
   .panel {
     background: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-    margin-bottom: 20px; max-width: 1300px; margin-left: auto; margin-right: auto;
+    margin-bottom: 20px; max-width: 1400px; margin-left: auto; margin-right: auto;
   }
   
   /* Controller & Inputs */
   .control-group { margin-bottom: 15px; }
   label { display: block; margin-bottom: 5px; color: #cbd5e1; font-weight: bold; font-size: 0.9rem; }
-  select, input[type="number"], input[type="date"] { 
+  select, input[type="number"], input[type="date"], input[type="text"] { 
     width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; 
     background: #0f172a; color: white; font-size: 1rem; box-sizing: border-box;
   }
@@ -41,13 +41,8 @@
   .btn-start { background: #10b981; }
   .btn-stop { background: #ef4444; color: white; display: none; }
   .btn-manual { background: #6366f1; color: white; font-size: 1rem; padding: 10px; }
-  .btn-main:hover { transform: scale(1.02); }
-
-  /* Daily Progress Bar */
-  .progress-wrapper { margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; }
-  .progress-bar-bg { background: #334155; height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
-  .progress-fill { background: linear-gradient(90deg, #38bdf8, #8b5cf6); height: 100%; width: 0%; transition: width 0.5s ease; }
-  .goal-text { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; }
+  .btn-small { background: #38bdf8; color: black; font-size: 0.9rem; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;}
+  .btn-main:hover, .btn-small:hover { transform: scale(1.02); }
 
   /* Charts Section */
   .charts-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
@@ -60,46 +55,56 @@
   .week-card { background: #334155; padding: 15px 20px; border-radius: 12px; min-width: 150px; text-align: center; border: 1px solid #475569; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
   .week-card h3 { margin: 0 0 10px 0; color: #38bdf8; font-size: 1.2rem; }
   .week-card p { margin: 0; font-size: 1.5rem; font-weight: bold; color: #facc15; }
-  .weekly-grid::-webkit-scrollbar { height: 8px; }
-  .weekly-grid::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
-  .weekly-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+  /* 10Q Checkboxes */
+  .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
+  .check-item { background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #475569; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .check-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
 
   /* History Table */
   table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-  th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; }
+  th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; font-size: 0.95rem; }
   th { background: #0f172a; color: #38bdf8; }
   tr:hover { background: #334155; }
   .del-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
 
-  /* Manual Entry Section */
+  /* Syllabus Manager */
+  .syllabus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; }
+
   #manualEntryForm { display: none; margin-top: 15px; padding: 15px; background: #0f172a; border-radius: 12px; border: 1px dashed #475569; }
 
   @media (max-width: 768px) {
-    .dashboard-grid { grid-template-columns: 1fr; }
+    .dashboard-grid, .syllabus-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<h1>Ultimate Study Analytics OS v2.2</h1>
-<div class="subtitle">Track. Analyze. Dominate.</div>
+<h1>Ultimate Study Analytics OS v3.0</h1>
+<div class="subtitle">Syllabus Mapping | 10Q Tracker | Master Analytics</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
-    <h2 style="margin-top:0; color:#fff;">Live Tracker</h2>
+    <h2 style="margin-top:0; color:#fff;">Live Focus Engine</h2>
     
     <div class="control-group">
       <label>Subject</label>
-      <select id="subjectSelect">
-        <option value="EDC">Electronic Devices & Circuits (EDC)</option>
-        <option value="Digital">Digital Electronics</option>
-        <option value="Control">Control Systems</option>
-        <option value="Math">Engineering Math</option>
-        <option value="Apti">Aptitude</option>
+      <select id="subjectSelect" onchange="populateTrackerChapters()"></select>
+    </div>
+    <div class="control-group">
+      <label>Chapter</label>
+      <select id="chapterSelect" onchange="populateTrackerSubtopics()">
+        <option value="General">General / Full Subject</option>
       </select>
     </div>
     <div class="control-group">
-      <label>Activity</label>
+      <label>Subtopic</label>
+      <select id="subtopicSelect">
+        <option value="General">General / All</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Activity Type</label>
       <select id="activitySelect">
         <option value="Practice">Question Practice / PYQ</option>
         <option value="Revision">Slide / Notes Revision</option>
@@ -113,42 +118,73 @@
     <button class="btn-main btn-start" id="startBtn" onclick="startSession()">▶ START FOCUS</button>
     <button class="btn-main btn-stop" id="stopBtn" onclick="stopSession()">⏹ STOP & SAVE</button>
     
-    <button class="btn-main btn-manual" onclick="toggleManualEntry()">➕ Forgot to Start Timer? Add Manually</button>
+    <button class="btn-main btn-manual" onclick="toggleManualEntry()">➕ Add Manual Session</button>
     
     <div id="manualEntryForm">
       <div class="control-group"><label>Date</label><input type="date" id="manDate"></div>
-      <div class="control-group"><label>Duration (in minutes)</label><input type="number" id="manMins" placeholder="e.g., 90"></div>
+      <div class="control-group"><label>Duration (Mins)</label><input type="number" id="manMins" placeholder="e.g., 90"></div>
       <button class="btn-main btn-start" style="padding: 10px;" onclick="addManualSession()">Save Manual Log</button>
-    </div>
-
-    <div class="progress-wrapper">
-      <div class="control-group">
-        <label>Set Daily Goal (Hours)</label>
-        <input type="number" id="dailyGoalInput" value="6" min="1" onchange="updateGoal()">
-      </div>
-      <div class="goal-text">
-        <span id="todayLogged">Today: 0h 0m</span>
-        <span id="goalPercent">0%</span>
-      </div>
-      <div class="progress-bar-bg">
-        <div class="progress-fill" id="goalProgressBar"></div>
-      </div>
     </div>
   </div>
 
   <div class="panel" style="margin-bottom: 0;">
-    <h2 style="margin-top:0; color:#fff;">Deep Analytics Dashboard</h2>
+    <h2 style="margin-top:0; color:#fff;">Core Dashboard</h2>
     <div class="charts-container">
       <div class="chart-box chart-box-wide"><canvas id="dailyChart"></canvas></div>
       <div class="chart-box"><canvas id="subjectChart"></canvas></div>
-      <div class="chart-box"><canvas id="activityChart"></canvas></div>
-      <div class="chart-box"><canvas id="timeOfDayChart"></canvas></div>
-      <div class="chart-box"><canvas id="cumulativeChart"></canvas></div>
+      <div class="chart-box"><canvas id="subtopicChart"></canvas></div>
     </div>
   </div>
 </div>
 
 <div class="panel" style="margin-top: 20px;">
+  <h2 style="margin-top:0; color:#facc15;">🔥 10Q Daily Practice Challenge</h2>
+  <p style="color:#94a3b8; font-size:0.9rem;">Select Date to View/Edit Ticks. Minimum 10 Quality Questions per ticked subject.</p>
+  
+  <div class="control-group" style="max-width: 300px;">
+    <label>Select Date to Track/Edit</label>
+    <input type="date" id="qDate" onchange="load10QData()">
+  </div>
+  
+  <div class="checkbox-grid" id="qCheckboxGrid">
+    </div>
+  
+  <div class="chart-box-wide" style="margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155;">
+    <canvas id="qChart"></canvas>
+  </div>
+</div>
+
+<div class="panel">
+  <h2 style="margin-top:0; color:#fff;">⚙️ Micro-Syllabus Builder</h2>
+  <p style="color:#94a3b8; font-size:0.9rem;">Create your chapters and subtopics here to track them in the timer.</p>
+  
+  <div class="syllabus-grid">
+    <div>
+      <div class="control-group">
+        <label>Subject</label>
+        <select id="sylSubjectSelect" onchange="loadSylChapters()"></select>
+      </div>
+      <div class="control-group">
+        <label>Add New Chapter</label>
+        <input type="text" id="newChapterInput" placeholder="e.g., Semiconductor Physics">
+        <button class="btn-small" style="margin-top:5px; width:100%;" onclick="addChapter()">+ Add Chapter</button>
+      </div>
+    </div>
+    <div>
+      <div class="control-group">
+        <label>Select Chapter</label>
+        <select id="sylChapterSelect"></select>
+      </div>
+      <div class="control-group">
+        <label>Add New Subtopic</label>
+        <input type="text" id="newSubtopicInput" placeholder="e.g., Fermi Level">
+        <button class="btn-small" style="margin-top:5px; width:100%;" onclick="addSubtopic()">+ Add Subtopic</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
   <h2 style="margin-top:0; color:#fff;">Long-Term Master Trend (Goal vs Actual)</h2>
   <div class="chart-box-full">
     <canvas id="longTermChart"></canvas>
@@ -156,9 +192,8 @@
 </div>
 
 <div class="panel">
-  <h2 style="margin-top:0; color:#fff;">Weekly Milestones (Your Prep Journey)</h2>
-  <div class="weekly-grid" id="weeklyGrid">
-    </div>
+  <h2 style="margin-top:0; color:#fff;">Weekly Milestones</h2>
+  <div class="weekly-grid" id="weeklyGrid"></div>
 </div>
 
 <div class="panel">
@@ -168,8 +203,9 @@
       <thead>
         <tr>
           <th>Date</th>
-          <th>Time Window</th>
+          <th>Time</th>
           <th>Subject</th>
+          <th>Chapter > Subtopic</th>
           <th>Activity</th>
           <th>Duration</th>
           <th>Action</th>
@@ -178,361 +214,143 @@
       <tbody id="historyTableBody"></tbody>
     </table>
   </div>
-  <div style="margin-top: 15px; text-align: right;">
-    <button onclick="exportData()" style="background:#3b82f6; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer;">💾 Export JSON</button>
-    <button onclick="clearAllData()" style="background:#b91c1c; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer;">⚠️ Clear All Data</button>
-  </div>
 </div>
 
 <script>
-// State Variables (Safe data retention)
+// --- CORE DATA & GATE ECE SUBJECTS ---
+const gateSubjects = [
+  "Networks", "Signals & Systems", "Electronic Devices (EDC)", 
+  "Analog Circuits", "Digital Circuits", "Control Systems", 
+  "Communications", "Electromagnetics (EMT)", "Engineering Math", "Aptitude"
+];
+
 let sessions = JSON.parse(localStorage.getItem('studySessions_v2')) || [];
 let dailyGoal = parseFloat(localStorage.getItem('dailyGoal_v2')) || 6;
-document.getElementById('dailyGoalInput').value = dailyGoal;
+let syllabus = JSON.parse(localStorage.getItem('syllabus_v3')) || {};
+let dailyTicks = JSON.parse(localStorage.getItem('dailyTicks_v3')) || {};
+
+// Initialize missing subjects in syllabus
+gateSubjects.forEach(sub => { if(!syllabus[sub]) syllabus[sub] = {}; });
+saveSyllabus();
+
+// UI Init Dates
 document.getElementById('manDate').valueAsDate = new Date();
+document.getElementById('qDate').valueAsDate = new Date();
 
 let currentSession = null;
 let timerInterval = null;
 
 // Chart Instances
-let dailyChart, subjectChart, activityChart, timeOfDayChart, cumulativeChart, longTermChart;
+let dailyChart, subjectChart, subtopicChart, longTermChart, qChart;
 
-// Helper Functions
-function formatDuration(seconds) {
-  const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
-  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-  const s = String(seconds % 60).padStart(2, '0');
-  return `${h}:${m}:${s}`;
+// --- INITIALIZATION ---
+function init() {
+  populateSubjectDropdowns();
+  loadSylChapters();
+  populateTrackerChapters();
+  load10QData();
+  updateDashboard();
 }
 
-function formatAMPM(date) {
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12; 
-  minutes = minutes < 10 ? '0'+minutes : minutes;
-  return hours + ':' + minutes + ' ' + ampm;
+function populateSubjectDropdowns() {
+  const tSel = document.getElementById('subjectSelect');
+  const sSel = document.getElementById('sylSubjectSelect');
+  tSel.innerHTML = ''; sSel.innerHTML = '';
+  gateSubjects.forEach(sub => {
+    tSel.innerHTML += `<option value="${sub}">${sub}</option>`;
+    sSel.innerHTML += `<option value="${sub}">${sub}</option>`;
+  });
 }
 
-// Ensure correct date parsing for sorting (DD/MM/YYYY to Timestamp)
-function parseDateStr(str) {
-  const parts = str.split('/');
-  if(parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getTime();
-  return 0;
+// --- SYLLABUS MANAGER LOGIC ---
+function saveSyllabus() { localStorage.setItem('syllabus_v3', JSON.stringify(syllabus)); }
+
+function loadSylChapters() {
+  const subj = document.getElementById('sylSubjectSelect').value;
+  const cSel = document.getElementById('sylChapterSelect');
+  cSel.innerHTML = '';
+  const chapters = Object.keys(syllabus[subj] || {});
+  if(chapters.length === 0) cSel.innerHTML = '<option disabled>No Chapters Added</option>';
+  else chapters.forEach(ch => cSel.innerHTML += `<option value="${ch}">${ch}</option>`);
 }
 
-// Timer Logic
-function startSession() {
+function addChapter() {
+  const subj = document.getElementById('sylSubjectSelect').value;
+  const chapter = document.getElementById('newChapterInput').value.trim();
+  if(chapter && !syllabus[subj][chapter]) {
+    syllabus[subj][chapter] = [];
+    saveSyllabus();
+    document.getElementById('newChapterInput').value = '';
+    loadSylChapters();
+    populateTrackerChapters(); // Update live tracker UI
+  }
+}
+
+function addSubtopic() {
+  const subj = document.getElementById('sylSubjectSelect').value;
+  const chapter = document.getElementById('sylChapterSelect').value;
+  const subtopic = document.getElementById('newSubtopicInput').value.trim();
+  if(chapter && subtopic && !syllabus[subj][chapter].includes(subtopic)) {
+    syllabus[subj][chapter].push(subtopic);
+    saveSyllabus();
+    document.getElementById('newSubtopicInput').value = '';
+    populateTrackerSubtopics(); // Update live tracker UI
+    alert(`Subtopic added to ${chapter}`);
+  }
+}
+
+// --- LIVE TRACKER DROPDOWNS ---
+function populateTrackerChapters() {
   const subj = document.getElementById('subjectSelect').value;
-  const act = document.getElementById('activitySelect').value;
-  
-  currentSession = {
-    id: Date.now(),
-    subject: subj,
-    activity: act,
-    startTime: Date.now(),
-    dateStr: new Date().toLocaleDateString('en-GB')
-  };
-  
-  document.getElementById('startBtn').style.display = 'none';
-  document.getElementById('stopBtn').style.display = 'block';
-  document.getElementById('subjectSelect').disabled = true;
-  document.getElementById('activitySelect').disabled = true;
-  
-  timerInterval = setInterval(updateTimerDisplay, 1000);
+  const cSel = document.getElementById('chapterSelect');
+  cSel.innerHTML = '<option value="General">General / Full Subject</option>';
+  Object.keys(syllabus[subj] || {}).forEach(ch => {
+    cSel.innerHTML += `<option value="${ch}">${ch}</option>`;
+  });
+  populateTrackerSubtopics();
 }
 
-function updateTimerDisplay() {
-  const elapsed = Math.floor((Date.now() - currentSession.startTime) / 1000);
-  document.getElementById('timerDisplay').innerText = formatDuration(elapsed);
-}
-
-function stopSession() {
-  clearInterval(timerInterval);
-  const endTime = Date.now();
-  const durationSec = Math.floor((endTime - currentSession.startTime) / 1000);
-  
-  if(durationSec > 10) {
-    currentSession.endTime = endTime;
-    currentSession.duration = durationSec;
-    sessions.push(currentSession);
-    saveData();
-  }
-  
-  currentSession = null;
-  document.getElementById('timerDisplay').innerText = "00:00:00";
-  document.getElementById('startBtn').style.display = 'block';
-  document.getElementById('stopBtn').style.display = 'none';
-  document.getElementById('subjectSelect').disabled = false;
-  document.getElementById('activitySelect').disabled = false;
-  
-  updateDashboard();
-}
-
-// Manual Entry Logic
-function toggleManualEntry() {
-  const form = document.getElementById('manualEntryForm');
-  form.style.display = form.style.display === 'block' ? 'none' : 'block';
-}
-
-function addManualSession() {
+function populateTrackerSubtopics() {
   const subj = document.getElementById('subjectSelect').value;
-  const act = document.getElementById('activitySelect').value;
-  const dateVal = document.getElementById('manDate').value;
-  const mins = parseInt(document.getElementById('manMins').value);
-
-  if(!dateVal || isNaN(mins) || mins <= 0) {
-    alert("Please enter a valid date and minutes.");
-    return;
+  const chapter = document.getElementById('chapterSelect').value;
+  const sSel = document.getElementById('subtopicSelect');
+  sSel.innerHTML = '<option value="General">General / All</option>';
+  if(chapter !== "General" && syllabus[subj][chapter]) {
+    syllabus[subj][chapter].forEach(subT => {
+      sSel.innerHTML += `<option value="${subT}">${subT}</option>`;
+    });
   }
+}
 
-  const [year, month, day] = dateVal.split('-');
-  const formattedDate = `${day}/${month}/${year}`;
+// --- 10Q TRACKER LOGIC ---
+function load10QData() {
+  const dateStr = document.getElementById('qDate').value;
+  if(!dateStr) return;
+  const [y, m, d] = dateStr.split('-');
+  const formattedDate = `${d}/${m}/${y}`; // DD/MM/YYYY
   
-  const fakeStartTime = new Date(year, month-1, day, 12, 0, 0).getTime();
-
-  sessions.push({
-    id: Date.now(),
-    subject: subj,
-    activity: act,
-    startTime: fakeStartTime,
-    endTime: fakeStartTime + (mins * 60 * 1000),
-    duration: mins * 60,
-    dateStr: formattedDate,
-    isManual: true
-  });
-
-  saveData();
-  updateDashboard();
-  document.getElementById('manMins').value = '';
-  toggleManualEntry();
-}
-
-// Goal Logic
-function updateGoal() {
-  dailyGoal = parseFloat(document.getElementById('dailyGoalInput').value) || 6;
-  localStorage.setItem('dailyGoal_v2', dailyGoal);
-  updateDashboard();
-}
-
-function deleteSession(id) {
-  if(confirm("Delete this session record?")) {
-    sessions = sessions.filter(s => s.id !== id);
-    saveData();
-    updateDashboard();
-  }
-}
-
-function saveData() { localStorage.setItem('studySessions_v2', JSON.stringify(sessions)); }
-
-function clearAllData() {
-  if(confirm("Are you sure? This deletes ALL history forever!")) {
-    sessions = []; saveData(); updateDashboard();
-  }
-}
-
-function exportData() {
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sessions));
-  const dlAnchor = document.createElement('a'); 
-  dlAnchor.setAttribute("href", dataStr); dlAnchor.setAttribute("download", "study_analytics_v2.json"); dlAnchor.click();
-}
-
-// UI & Chart Updates
-Chart.defaults.color = '#cbd5e1';
-Chart.defaults.maintainAspectRatio = false;
-
-function updateDashboard() {
-  renderTable();
-  renderWeeklySummary();
-  renderCharts();
-}
-
-function renderWeeklySummary() {
-  const grid = document.getElementById('weeklyGrid');
-  grid.innerHTML = '';
+  if(!dailyTicks[formattedDate]) dailyTicks[formattedDate] = {};
   
-  if(sessions.length === 0) {
-    grid.innerHTML = '<p style="color:#94a3b8; font-style:italic;">No data yet. Start tracking to see your weekly progress build up!</p>';
-    return;
-  }
-
-  const firstSessionTime = Math.min(...sessions.map(s => s.startTime));
-  let weeklyData = {};
-
-  sessions.forEach(s => {
-    const msSinceStart = s.startTime - firstSessionTime;
-    const weekNum = Math.floor(msSinceStart / (7 * 24 * 60 * 60 * 1000)) + 1;
-    weeklyData[weekNum] = (weeklyData[weekNum] || 0) + s.duration;
-  });
-
-  Object.keys(weeklyData).sort((a,b) => a - b).forEach(week => {
-    const totalHrs = weeklyData[week] / 3600;
-    const card = document.createElement('div');
-    card.className = 'week-card';
-    card.innerHTML = `
-      <h3>Week ${week}</h3>
-      <p>${Math.floor(totalHrs)}h ${Math.round((totalHrs % 1) * 60)}m</p>
+  const container = document.getElementById('qCheckboxGrid');
+  container.innerHTML = '';
+  
+  gateSubjects.forEach(sub => {
+    const isChecked = dailyTicks[formattedDate][sub] ? 'checked' : '';
+    container.innerHTML += `
+      <label class="check-item">
+        <input type="checkbox" onchange="update10Q('${formattedDate}', '${sub}', this.checked)" ${isChecked}>
+        ${sub.replace(/ *\([^)]*\) */g, "")} </label>
     `;
-    grid.appendChild(card);
   });
+  render10QChart();
 }
 
-function renderTable() {
-  const tbody = document.getElementById('historyTableBody');
-  tbody.innerHTML = '';
-  const sorted = [...sessions].sort((a,b) => b.startTime - a.startTime);
-  
-  let todayTotalSec = 0;
-  const todayStr = new Date().toLocaleDateString('en-GB');
-
-  sorted.forEach(s => {
-    if(s.dateStr === todayStr) todayTotalSec += s.duration;
-
-    const tr = document.createElement('tr');
-    const startStr = s.isManual ? "Manual Log" : formatAMPM(new Date(s.startTime));
-    const endStr = s.isManual ? "" : " - " + formatAMPM(new Date(s.endTime));
-    
-    tr.innerHTML = `
-      <td>${s.dateStr}</td>
-      <td>${startStr}${endStr}</td>
-      <td><strong>${s.subject}</strong></td>
-      <td>${s.activity}</td>
-      <td>${Math.round(s.duration/60)} mins</td>
-      <td><button class="del-btn" onclick="deleteSession(${s.id})">Del</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  const todayHrs = todayTotalSec / 3600;
-  const percent = Math.min((todayHrs / dailyGoal) * 100, 100);
-  document.getElementById('todayLogged').innerText = `Today: ${Math.floor(todayHrs)}h ${Math.floor((todayHrs%1)*60)}m`;
-  document.getElementById('goalPercent').innerText = `${Math.round(percent)}%`;
-  document.getElementById('goalProgressBar').style.width = `${percent}%`;
+function update10Q(date, subject, isChecked) {
+  dailyTicks[date][subject] = isChecked;
+  localStorage.setItem('dailyTicks_v3', JSON.stringify(dailyTicks));
+  render10QChart();
 }
 
-function renderCharts() {
-  let dailyData = {}; let subjData = {}; let actData = {};
-  let timeOfDayData = { Morning: 0, Afternoon: 0, Evening: 0, Night: 0 };
-  
-  const chrono = [...sessions].sort((a,b) => a.startTime - b.startTime);
-  
-  chrono.forEach(s => {
-    const hrs = s.duration / 3600;
-    dailyData[s.dateStr] = (dailyData[s.dateStr] || 0) + hrs;
-    subjData[s.subject] = (subjData[s.subject] || 0) + hrs;
-    actData[s.activity] = (actData[s.activity] || 0) + hrs;
-
-    if(!s.isManual) {
-      const hour = new Date(s.startTime).getHours();
-      if(hour >= 5 && hour < 12) timeOfDayData.Morning += hrs;
-      else if(hour >= 12 && hour < 17) timeOfDayData.Afternoon += hrs;
-      else if(hour >= 17 && hour < 21) timeOfDayData.Evening += hrs;
-      else timeOfDayData.Night += hrs;
-    }
-  });
-
-  // Accurate sorting of dates for all charts
-  const sortedAllDates = Object.keys(dailyData).sort((a,b) => parseDateStr(a) - parseDateStr(b));
-  
-  const last7Dates = sortedAllDates.slice(-7);
-  const last7Values = last7Dates.map(d => dailyData[d]);
-
-  let cumulativeValues = [];
-  let sum = 0;
-  last7Values.forEach(val => { sum += val; cumulativeValues.push(sum); });
-
-  // 1. Daily Chart (Last 7 Days)
-  const ctxDaily = document.getElementById('dailyChart').getContext('2d');
-  if(dailyChart) dailyChart.destroy();
-  dailyChart = new Chart(ctxDaily, {
-    type: 'bar',
-    data: { labels: last7Dates, datasets: [{ label: 'Hours', data: last7Values, backgroundColor: '#38bdf8', borderRadius: 4 }] },
-    options: { plugins: { title: { display: true, text: 'Daily Output Trend' } } }
-  });
-
-  // 2. Subject Chart
-  const ctxSubj = document.getElementById('subjectChart').getContext('2d');
-  if(subjectChart) subjectChart.destroy();
-  subjectChart = new Chart(ctxSubj, {
-    type: 'pie',
-    data: { labels: Object.keys(subjData), datasets: [{ data: Object.values(subjData), backgroundColor: ['#f43f5e', '#8b5cf6', '#10b981', '#f59e0b', '#3b82f6'] }] },
-    options: { plugins: { title: { display: true, text: 'Subject Focus' } } }
-  });
-
-  // 3. Activity Chart
-  const ctxAct = document.getElementById('activityChart').getContext('2d');
-  if(activityChart) activityChart.destroy();
-  activityChart = new Chart(ctxAct, {
-    type: 'doughnut',
-    data: { labels: Object.keys(actData), datasets: [{ data: Object.values(actData), backgroundColor: ['#10b981', '#3b82f6', '#64748b', '#facc15'] }] },
-    options: { plugins: { title: { display: true, text: 'Quality of Study' } }, cutout: '60%' }
-  });
-
-  // 4. Time of Day Chart
-  const ctxTime = document.getElementById('timeOfDayChart').getContext('2d');
-  if(timeOfDayChart) timeOfDayChart.destroy();
-  timeOfDayChart = new Chart(ctxTime, {
-    type: 'polarArea',
-    data: { labels: Object.keys(timeOfDayData), datasets: [{ data: Object.values(timeOfDayData), backgroundColor: ['rgba(250, 204, 21, 0.6)', 'rgba(56, 189, 248, 0.6)', 'rgba(139, 92, 246, 0.6)', 'rgba(15, 23, 42, 0.6)'] }] },
-    options: { plugins: { title: { display: true, text: 'Peak Output Zones' } } }
-  });
-
-  // 5. Cumulative Chart
-  const ctxCumul = document.getElementById('cumulativeChart').getContext('2d');
-  if(cumulativeChart) cumulativeChart.destroy();
-  cumulativeChart = new Chart(ctxCumul, {
-    type: 'line',
-    data: { labels: last7Dates, datasets: [{ label: 'Total Hours Built', data: cumulativeValues, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] },
-    options: { plugins: { title: { display: true, text: '7-Day Burn-Up Chart' } } }
-  });
-
-  // 6. NEW: Long-Term Master Trend (Goal vs Actual with exact dates)
-  const allActuals = sortedAllDates.map(d => dailyData[d]);
-  const allGoals = sortedAllDates.map(d => dailyGoal); // Yellow line data
-
-  const ctxLongTerm = document.getElementById('longTermChart').getContext('2d');
-  if(longTermChart) longTermChart.destroy();
-  longTermChart = new Chart(ctxLongTerm, {
-    type: 'line',
-    data: {
-      labels: sortedAllDates, // Exact dates instead of 'Day 1'
-      datasets: [
-        {
-          label: 'Actual Study Hours',
-          data: allActuals,
-          borderColor: '#00ffd5', // Teal color from image
-          backgroundColor: 'rgba(0, 255, 213, 0.1)',
-          borderWidth: 2,
-          tension: 0.4 // Curvy lines
-        },
-        {
-          label: 'Daily Target',
-          data: allGoals,
-          borderColor: '#facc15', // Yellow color from image
-          backgroundColor: 'transparent',
-          borderWidth: 2,
-          tension: 0.4 // Curvy lines
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { labels: { color: '#fff' } }
-      },
-      scales: {
-        x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
-        y: { beginAtZero: true, suggestedMax: dailyGoal + 2, ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
-      }
-    }
-  });
-}
-
-// Initialize
-updateDashboard();
-</script>
-
-</body>
-</html>
+// --- HELPER FUNCTIONS ---
+function formatDuration(sec) {
+  const h = String(Math.floor(sec / 360
