@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.0 (God-Mode Tracker)</title>
+<title>Ultimate Study OS v4.1 (God-Mode Tracker)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -37,11 +37,20 @@
   /* Subtopic Builder UI */
   .builder-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;}
   .chapter-block { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-  .chapter-title { color: #facc15; font-size: 1.1rem; margin-top: 0; margin-bottom: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 5px;}
+  .chapter-title { color: #facc15; font-size: 1.1rem; margin-top: 0; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 5px;}
   .chapter-title button { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;}
-  .pill-container { display: flex; flex-wrap: wrap; gap: 8px; }
-  .pill { background: #334155; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; color: #cbd5e1; display: flex; align-items: center; gap: 8px; border: 1px solid #475569;}
-  .pill span { cursor: pointer; color: #ef4444; font-weight: bold; font-size: 1rem;}
+  .pill-container { display: flex; flex-direction: column; gap: 8px; }
+  
+  /* Updated Pill Styling for Long Text + Edit Button */
+  .pill { 
+    background: #334155; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; color: #cbd5e1; 
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; border: 1px solid #475569;
+    word-break: break-word; line-height: 1.4;
+  }
+  .pill-text { flex: 1; }
+  .pill-actions { display: flex; gap: 12px; border-left: 1px solid #475569; padding-left: 10px; align-items: center; }
+  .pill-actions span { cursor: pointer; font-size: 1.1rem; transition: transform 0.2s; }
+  .pill-actions span:hover { transform: scale(1.2); }
 
   /* Progress Bar */
   .progress-wrapper { margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; }
@@ -75,7 +84,7 @@
 </head>
 <body>
 
-<h1>Ultimate Study OS v4.0</h1>
+<h1>Ultimate Study OS v4.1</h1>
 <div class="subtitle">3-Tier Mastery Tracker (Subject ➔ Chapter ➔ Topic)</div>
 
 <div class="dashboard-grid">
@@ -106,7 +115,7 @@
         <button class="btn-small" onclick="addSyllabusNode()">+ Add</button>
       </div>
     </div>
-    <div id="syllabusContainer" style="margin-top: 20px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
+    <div id="syllabusContainer" style="margin-top: 20px; max-height: 350px; overflow-y: auto; padding-right: 10px;"></div>
   </div>
 </div>
 
@@ -193,14 +202,13 @@
 </div>
 
 <script>
-// Data Architecture
+// Data Architecture (SAME KEYS AS V4 TO PREVENT DATA LOSS)
 const GATE_SUBJECTS = ["Engineering Math", "General Aptitude", "Networks", "Electronic Devices (EDC)", "Analog Circuits", "Digital Circuits", "Signals & Systems", "Control Systems", "Communications", "Electromagnetics (EMT)"];
 
-// DB Keys
+// DB Keys (Crucial for Data Retention)
 let sessions = JSON.parse(localStorage.getItem('studySessions_v4')) || [];
 let dailyGoal = parseFloat(localStorage.getItem('dailyGoal_v4')) || 6;
 let tenQData = JSON.parse(localStorage.getItem('tenQData_v4')) || {};
-// Syllabus Structure: { "EDC": { "Semiconductor Physics": ["Energy Bands", "Mass Action Law"] } }
 let dbHierarchy = JSON.parse(localStorage.getItem('syllabusDb_v4')) || {}; 
 
 // Initialize Missing Subjects
@@ -213,7 +221,7 @@ document.getElementById('q10Date').valueAsDate = new Date();
 
 let currentSession = null;
 let timerInterval = null;
-let charts = {}; // Store charts object
+let charts = {};
 
 // Utility
 function formatDur(sec) { const h = String(Math.floor(sec/3600)).padStart(2,'0'), m = String(Math.floor((sec%3600)/60)).padStart(2,'0'), s = String(sec%60).padStart(2,'0'); return `${h}:${m}:${s}`; }
@@ -225,10 +233,7 @@ function initApp() {
   const selects = [document.getElementById('subjectSelect'), document.getElementById('manageSubjectSelect')];
   selects.forEach(sel => { sel.innerHTML = ''; GATE_SUBJECTS.forEach(sub => sel.add(new Option(sub, sub))); });
   
-  renderBuilderUI();
-  updateTrackerChapters();
-  render10QGrid();
-  updateDashboard();
+  renderBuilderUI(); updateTrackerChapters(); render10QGrid(); updateDashboard();
 }
 
 // --- SYLLABUS BUILDER (TIER 3) ---
@@ -248,7 +253,17 @@ function renderBuilderUI() {
   for(const [chapName, topics] of Object.entries(chapters)) {
     dataList.appendChild(new Option(chapName, chapName)); // Fill autocomplete
     
-    let pillsHTML = topics.map((t, i) => `<div class="pill">${t} <span onclick="delTopic('${sub}', '${chapName}', ${i})">✕</span></div>`).join('');
+    // NEW: Pill with Text Box and Edit Button
+    let pillsHTML = topics.map((t, i) => `
+      <div class="pill">
+        <div class="pill-text">${t}</div>
+        <div class="pill-actions">
+          <span title="Edit Topic" onclick="editTopic('${sub}', '${chapName}', ${i})" style="color:#38bdf8;">✏️</span>
+          <span title="Delete Topic" onclick="delTopic('${sub}', '${chapName}', ${i})" style="color:#ef4444;">✕</span>
+        </div>
+      </div>
+    `).join('');
+    
     if(topics.length === 0) pillsHTML = `<span style="font-size:0.8rem; color:#64748b;">No topics added.</span>`;
 
     container.insertAdjacentHTML('beforeend', `
@@ -267,12 +282,25 @@ function addSyllabusNode() {
   
   if(!chap) return alert("Please enter a Chapter name.");
 
-  if(!dbHierarchy[sub][chap]) dbHierarchy[sub][chap] = []; // Create chapter if not exists
-  if(top && !dbHierarchy[sub][chap].includes(top)) dbHierarchy[sub][chap].push(top); // Add topic
+  if(!dbHierarchy[sub][chap]) dbHierarchy[sub][chap] = []; 
+  if(top && !dbHierarchy[sub][chap].includes(top)) dbHierarchy[sub][chap].push(top); 
   
   localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy));
-  document.getElementById('topicInput').value = ''; // clear only topic for fast entry
+  document.getElementById('topicInput').value = ''; 
   renderBuilderUI(); updateTrackerChapters();
+}
+
+// NEW: Edit Function
+function editTopic(sub, chap, index) {
+  const currentTopic = dbHierarchy[sub][chap][index];
+  const newTopic = prompt("Edit your topic name:", currentTopic);
+  
+  if(newTopic !== null && newTopic.trim() !== "") {
+    dbHierarchy[sub][chap][index] = newTopic.trim();
+    localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy));
+    renderBuilderUI(); 
+    updateTrackerChapters();
+  }
 }
 
 function delTopic(sub, chap, index) { dbHierarchy[sub][chap].splice(index, 1); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters();}
@@ -379,23 +407,19 @@ function updateDashboard() {
   let dData = {}, sData = {}, aData = {}, chapData = {};
 
   sorted.forEach(s => {
-    // Table
     if(s.dateStr === todayStr) todaySec += s.duration;
     const hierarchyStr = `${s.chapter !== 'General' ? s.chapter : 'General'} <br><small style="color:#facc15">➔ ${s.topic !== 'General' ? s.topic : 'General'}</small>`;
     tbody.insertAdjacentHTML('beforeend', `<tr><td>${s.dateStr}</td><td>${s.isManual?"Manual":formatAMPM(new Date(s.startTime))}</td><td><strong>${s.subject}</strong></td><td>${hierarchyStr}</td><td>${s.activity}</td><td>${Math.round(s.duration/60)}m</td><td><button class="del-btn" onclick="delSession(${s.id})">Del</button></td></tr>`);
     
-    // Aggregation
     const h = s.duration / 3600;
     dData[s.dateStr] = (dData[s.dateStr]||0)+h; sData[s.subject] = (sData[s.subject]||0)+h; aData[s.activity] = (aData[s.activity]||0)+h;
     if(s.chapter && s.chapter !== 'General') { const k = `${s.subject}: ${s.chapter}`; chapData[k] = (chapData[k]||0)+h; }
   });
 
-  // Goal
   const th = todaySec/3600, pct = Math.min((th/dailyGoal)*100, 100);
   document.getElementById('todayLogged').innerText = `Today: ${Math.floor(th)}h ${Math.floor((th%1)*60)}m`;
   document.getElementById('goalPercent').innerText = `${Math.round(pct)}%`; document.getElementById('goalProgressBar').style.width = `${pct}%`;
 
-  // Weekly
   const wGrid = document.getElementById('weeklyGrid'); wGrid.innerHTML = '';
   if(sessions.length) {
     const start = Math.min(...sessions.map(s=>s.startTime)); let wData = {};
@@ -403,29 +427,23 @@ function updateDashboard() {
     Object.keys(wData).sort((a,b)=>a-b).forEach(w => wGrid.insertAdjacentHTML('beforeend', `<div class="week-card"><h3>Week ${w}</h3><p>${Math.floor(wData[w]/3600)}h ${Math.round(((wData[w]/3600)%1)*60)}m</p></div>`));
   } else wGrid.innerHTML = '<p style="color:#94a3b8">No data yet.</p>';
 
-  // Charts
   const sDates = Object.keys(dData).sort((a,b) => parseDateStr(a)-parseDateStr(b));
   const l7D = sDates.slice(-7), l7V = l7D.map(d=>dData[d]);
 
-  // 1. Daily Bar
   if(charts.d) charts.d.destroy();
   charts.d = new Chart(document.getElementById('dailyChart'), { type: 'bar', data: { labels: l7D, datasets: [{ label: 'Hours', data: l7V, backgroundColor: '#38bdf8', borderRadius:4 }] }, options: { plugins: { title: { display:true, text: 'Daily Output Trend' } } } });
 
-  // 2. 10Q Bar
   const q10V = l7D.map(d => { let c=0; if(tenQData[d]) Object.values(tenQData[d]).forEach(v=>{if(v)c++}); return c; });
   if(charts.q) charts.q.destroy();
   charts.q = new Chart(document.getElementById('q10Chart'), { type: 'bar', data: { labels: l7D, datasets: [{ label: 'Subjects w/ 10Q Solved', data: q10V, backgroundColor: '#10b981', borderRadius:4 }] }, options: { plugins: { title: { display:true, text: '10Q Consistency (Last 7 Days)' } }, scales:{ y:{beginAtZero:true, suggestedMax:3} } } });
 
-  // 3. Subject Pie & 4. Activity Doughnut
   if(charts.s) charts.s.destroy(); charts.s = new Chart(document.getElementById('subjectChart'), { type: 'pie', data: { labels: Object.keys(sData), datasets: [{ data: Object.values(sData), backgroundColor: ['#f43f5e', '#8b5cf6', '#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#14b8a6'] }] }, options: { plugins: { title: { display:true, text: 'Syllabus Weightage' } } } });
   if(charts.a) charts.a.destroy(); charts.a = new Chart(document.getElementById('activityChart'), { type: 'doughnut', data: { labels: Object.keys(aData), datasets: [{ data: Object.values(aData), backgroundColor: ['#10b981', '#3b82f6', '#64748b', '#facc15'] }] }, options: { plugins: { title: { display:true, text: 'Quality of Study' } }, cutout: '60%' } });
 
-  // 5. Chapter Mastery (Horizontal)
   const topChap = Object.entries(chapData).sort((a,b)=>b[1]-a[1]).slice(0,15);
   if(charts.c) charts.c.destroy();
   charts.c = new Chart(document.getElementById('chapterAnalyticsChart'), { type: 'bar', data: { labels: topChap.map(i=>i[0]), datasets: [{ label: 'Total Hours', data: topChap.map(i=>i[1].toFixed(2)), backgroundColor: '#8b5cf6', borderRadius: 4 }] }, options: { indexAxis: 'y', plugins: { legend: {display: false} } } });
 
-  // 6. Long Term
   if(charts.lt) charts.lt.destroy();
   charts.lt = new Chart(document.getElementById('longTermChart'), { type: 'line', data: { labels: sDates, datasets: [{ label: 'Actual', data: sDates.map(d=>dData[d]), borderColor: '#00ffd5', backgroundColor: 'rgba(0, 255, 213, 0.1)', borderWidth:2, tension:0.4 }, { label: 'Goal', data: sDates.map(d=>dailyGoal), borderColor: '#facc15', backgroundColor: 'transparent', borderWidth:2, tension:0.4 }] }, options: { responsive:true, maintainAspectRatio:false, scales:{ y:{beginAtZero:true, suggestedMax: dailyGoal+2} } } });
 }
