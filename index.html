@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.1 (God-Mode Tracker)</title>
+<title>Ultimate Study OS v4.2 (Accountability Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -29,8 +29,15 @@
   .btn-small { background: #38bdf8; color: #000; padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; white-space: nowrap;}
   .btn-main:hover, .btn-small:hover { transform: scale(1.02); }
 
+  /* NEW: Daily Ritual Block */
+  .ritual-block { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 15px; border-radius: 10px; margin-top: 10px; margin-bottom: 20px; border: 1px solid #475569;}
+  .ritual-text { font-size: 0.95rem; font-weight: bold; color: #f8fafc; flex: 1; margin-right: 15px; line-height: 1.4;}
+  .ritual-btn { background: #0f172a; border: 2px solid #ef4444; color: #ef4444; border-radius: 8px; padding: 8px 15px; font-weight: bold; cursor: pointer; transition: 0.2s; white-space: nowrap; font-size: 0.95rem;}
+  .ritual-btn.done { background: #10b981; border-color: #059669; color: white; }
+  .ritual-btn:hover { transform: scale(1.05); }
+
   /* 10Q Grid */
-  .q10-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 15px;}
+  .q10-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 10px;}
   .q10-btn { background: #0f172a; color: #94a3b8; border: 2px solid #334155; border-radius: 8px; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; font-size: 0.9rem;}
   .q10-btn.active { background: #10b981; color: #fff; border-color: #059669; }
 
@@ -41,7 +48,7 @@
   .chapter-title button { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;}
   .pill-container { display: flex; flex-direction: column; gap: 8px; }
   
-  /* Updated Pill Styling for Long Text + Edit Button */
+  /* Pill Styling for Long Text + Edit Button */
   .pill { 
     background: #334155; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; color: #cbd5e1; 
     display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; border: 1px solid #475569;
@@ -79,19 +86,26 @@
   .del-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
 
   #manualEntryForm { display: none; margin-top: 15px; padding: 15px; background: #0f172a; border-radius: 12px; border: 1px dashed #475569; }
-  @media (max-width: 768px) { .dashboard-grid, .builder-row { flex-direction: column; } .dashboard-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) { .dashboard-grid, .builder-row { flex-direction: column; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } }
 </style>
 </head>
 <body>
 
-<h1>Ultimate Study OS v4.1</h1>
-<div class="subtitle">3-Tier Mastery Tracker (Subject ➔ Chapter ➔ Topic)</div>
+<h1>Ultimate Study OS v4.2</h1>
+<div class="subtitle">3-Tier Mastery Tracker + Daily Accountability</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
-    <h2 style="margin-top:0; color:#10b981;">Daily 10-Q Attack</h2>
-    <p style="font-size: 0.85rem; color:#94a3b8;">Mark 10+ questions solved per subject. Select date to edit past.</p>
-    <div class="control-group"><input type="date" id="q10Date" onchange="render10QGrid()"></div>
+    <h2 style="margin-top:0; color:#10b981;">Daily Rituals & 10-Q Attack</h2>
+    <p style="font-size: 0.85rem; color:#94a3b8;">Select date to log/edit your daily actions.</p>
+    <div class="control-group"><input type="date" id="ritualDate" onchange="renderDailyRituals()"></div>
+    
+    <div class="ritual-block">
+      <div class="ritual-text">📝 Have you written your goal and today's mistake?</div>
+      <button id="mistakeTickBtn" class="ritual-btn" onclick="toggleMistakeTick()">❌ Pending</button>
+    </div>
+
+    <p style="font-size: 0.85rem; color:#94a3b8; border-top: 1px solid #334155; padding-top: 10px;">Mark 10+ questions solved per subject:</p>
     <div class="q10-grid" id="q10Grid"></div>
   </div>
 
@@ -202,14 +216,16 @@
 </div>
 
 <script>
-// Data Architecture (SAME KEYS AS V4 TO PREVENT DATA LOSS)
+// Data Architecture (SAFE KEYS PRESERVED)
 const GATE_SUBJECTS = ["Engineering Math", "General Aptitude", "Networks", "Electronic Devices (EDC)", "Analog Circuits", "Digital Circuits", "Signals & Systems", "Control Systems", "Communications", "Electromagnetics (EMT)"];
 
-// DB Keys (Crucial for Data Retention)
+// DB Keys 
 let sessions = JSON.parse(localStorage.getItem('studySessions_v4')) || [];
 let dailyGoal = parseFloat(localStorage.getItem('dailyGoal_v4')) || 6;
 let tenQData = JSON.parse(localStorage.getItem('tenQData_v4')) || {};
 let dbHierarchy = JSON.parse(localStorage.getItem('syllabusDb_v4')) || {}; 
+// NEW: Mistake/Goal Data Key
+let mistakeData = JSON.parse(localStorage.getItem('mistakeData_v4')) || {}; 
 
 // Initialize Missing Subjects
 GATE_SUBJECTS.forEach(sub => { if(!dbHierarchy[sub]) dbHierarchy[sub] = {}; });
@@ -217,7 +233,7 @@ GATE_SUBJECTS.forEach(sub => { if(!dbHierarchy[sub]) dbHierarchy[sub] = {}; });
 // Globals
 document.getElementById('dailyGoalInput').value = dailyGoal;
 document.getElementById('manDate').valueAsDate = new Date();
-document.getElementById('q10Date').valueAsDate = new Date();
+document.getElementById('ritualDate').valueAsDate = new Date();
 
 let currentSession = null;
 let timerInterval = null;
@@ -233,7 +249,7 @@ function initApp() {
   const selects = [document.getElementById('subjectSelect'), document.getElementById('manageSubjectSelect')];
   selects.forEach(sel => { sel.innerHTML = ''; GATE_SUBJECTS.forEach(sub => sel.add(new Option(sub, sub))); });
   
-  renderBuilderUI(); updateTrackerChapters(); render10QGrid(); updateDashboard();
+  renderBuilderUI(); updateTrackerChapters(); renderDailyRituals(); updateDashboard();
 }
 
 // --- SYLLABUS BUILDER (TIER 3) ---
@@ -251,9 +267,8 @@ function renderBuilderUI() {
   }
 
   for(const [chapName, topics] of Object.entries(chapters)) {
-    dataList.appendChild(new Option(chapName, chapName)); // Fill autocomplete
+    dataList.appendChild(new Option(chapName, chapName));
     
-    // NEW: Pill with Text Box and Edit Button
     let pillsHTML = topics.map((t, i) => `
       <div class="pill">
         <div class="pill-text">${t}</div>
@@ -279,27 +294,21 @@ function addSyllabusNode() {
   const sub = document.getElementById('manageSubjectSelect').value;
   const chap = document.getElementById('chapterInput').value.trim();
   const top = document.getElementById('topicInput').value.trim();
-  
   if(!chap) return alert("Please enter a Chapter name.");
-
   if(!dbHierarchy[sub][chap]) dbHierarchy[sub][chap] = []; 
   if(top && !dbHierarchy[sub][chap].includes(top)) dbHierarchy[sub][chap].push(top); 
-  
   localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy));
   document.getElementById('topicInput').value = ''; 
   renderBuilderUI(); updateTrackerChapters();
 }
 
-// NEW: Edit Function
 function editTopic(sub, chap, index) {
   const currentTopic = dbHierarchy[sub][chap][index];
   const newTopic = prompt("Edit your topic name:", currentTopic);
-  
   if(newTopic !== null && newTopic.trim() !== "") {
     dbHierarchy[sub][chap][index] = newTopic.trim();
     localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy));
-    renderBuilderUI(); 
-    updateTrackerChapters();
+    renderBuilderUI(); updateTrackerChapters();
   }
 }
 
@@ -311,7 +320,6 @@ function updateTrackerChapters() {
   const sub = document.getElementById('subjectSelect').value;
   const chapSel = document.getElementById('chapterSelect');
   chapSel.innerHTML = '<option value="General">General / Full Subject</option>';
-  
   const chapters = Object.keys(dbHierarchy[sub] || {});
   chapters.forEach(c => chapSel.add(new Option(c, c)));
   updateTrackerTopics();
@@ -322,39 +330,56 @@ function updateTrackerTopics() {
   const chap = document.getElementById('chapterSelect').value;
   const topSel = document.getElementById('topicSelect');
   topSel.innerHTML = '<option value="General">General / Full Chapter</option>';
-  
   if(chap !== 'General' && dbHierarchy[sub][chap]) {
     dbHierarchy[sub][chap].forEach(t => topSel.add(new Option(t, t)));
   }
 }
 
-// --- 10Q SYSTEM ---
-function render10QGrid() {
-  const grid = document.getElementById('q10Grid'); grid.innerHTML = '';
-  const dateVal = document.getElementById('q10Date').value;
+// --- DAILY RITUALS (10Q & MISTAKE) ---
+function renderDailyRituals() {
+  const dateVal = document.getElementById('ritualDate').value;
   if(!dateVal) return;
   const [y, m, d] = dateVal.split('-'); const dateStr = `${d}/${m}/${y}`;
+  
+  // 1. Render Mistake Block
+  const btn = document.getElementById('mistakeTickBtn');
+  const isMistakeDone = mistakeData[dateStr] || false;
+  if(isMistakeDone) {
+    btn.className = 'ritual-btn done'; btn.innerHTML = '✅ Done';
+  } else {
+    btn.className = 'ritual-btn'; btn.innerHTML = '❌ Pending';
+  }
+
+  // 2. Render 10Q Grid
+  const grid = document.getElementById('q10Grid'); grid.innerHTML = '';
   if(!tenQData[dateStr]) tenQData[dateStr] = {};
 
   GATE_SUBJECTS.forEach(sub => {
     const isDone = tenQData[dateStr][sub] || false;
-    const btn = document.createElement('div');
-    btn.className = `q10-btn ${isDone ? 'active' : ''}`;
-    btn.innerHTML = `${isDone ? '✅' : '🎯'} ${sub}`;
-    btn.onclick = () => { tenQData[dateStr][sub] = !isDone; localStorage.setItem('tenQData_v4', JSON.stringify(tenQData)); render10QGrid(); updateDashboard(); };
-    grid.appendChild(btn);
+    const qbtn = document.createElement('div');
+    qbtn.className = `q10-btn ${isDone ? 'active' : ''}`;
+    qbtn.innerHTML = `${isDone ? '✅' : '🎯'} ${sub}`;
+    qbtn.onclick = () => { tenQData[dateStr][sub] = !isDone; localStorage.setItem('tenQData_v4', JSON.stringify(tenQData)); renderDailyRituals(); updateDashboard(); };
+    grid.appendChild(qbtn);
   });
+}
+
+function toggleMistakeTick() {
+  const dateVal = document.getElementById('ritualDate').value;
+  if(!dateVal) return;
+  const [y, m, d] = dateVal.split('-'); const dateStr = `${d}/${m}/${y}`;
+  
+  mistakeData[dateStr] = !(mistakeData[dateStr] || false);
+  localStorage.setItem('mistakeData_v4', JSON.stringify(mistakeData));
+  renderDailyRituals();
 }
 
 // --- TIMER & MANUAL LOG ---
 function startSession() {
   currentSession = {
-    id: Date.now(),
-    subject: document.getElementById('subjectSelect').value,
-    chapter: document.getElementById('chapterSelect').value,
-    topic: document.getElementById('topicSelect').value,
-    activity: document.getElementById('activitySelect').value,
-    startTime: Date.now(), dateStr: new Date().toLocaleDateString('en-GB')
+    id: Date.now(), subject: document.getElementById('subjectSelect').value,
+    chapter: document.getElementById('chapterSelect').value, topic: document.getElementById('topicSelect').value,
+    activity: document.getElementById('activitySelect').value, startTime: Date.now(), dateStr: new Date().toLocaleDateString('en-GB')
   };
   ['startBtn','subjectSelect','chapterSelect','topicSelect'].forEach(id => document.getElementById(id).style.display = id==='startBtn'?'none':'');
   ['subjectSelect','chapterSelect','topicSelect'].forEach(id => document.getElementById(id).disabled = true);
@@ -382,11 +407,8 @@ function addManualSession() {
   const [y, m, d] = dateVal.split('-'); const fakeTime = new Date(y, m-1, d, 12, 0, 0).getTime();
 
   sessions.push({
-    id: Date.now(),
-    subject: document.getElementById('subjectSelect').value,
-    chapter: document.getElementById('chapterSelect').value,
-    topic: document.getElementById('topicSelect').value,
-    activity: document.getElementById('activitySelect').value,
+    id: Date.now(), subject: document.getElementById('subjectSelect').value, chapter: document.getElementById('chapterSelect').value,
+    topic: document.getElementById('topicSelect').value, activity: document.getElementById('activitySelect').value,
     startTime: fakeTime, endTime: fakeTime + (mins*60000), duration: mins*60, dateStr: `${d}/${m}/${y}`, isManual: true
   });
   localStorage.setItem('studySessions_v4', JSON.stringify(sessions));
