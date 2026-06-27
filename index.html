@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.4 (Cockpit Edition)</title>
+<title>Ultimate Study OS v4.5 (Cockpit Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -106,10 +106,6 @@
   .matrix-table td:last-child { border-radius: 0 8px 8px 0;}
   .matrix-cb { width: 22px; height: 22px; accent-color: #10b981; cursor: pointer;}
   
-  .test-pill { display: inline-flex; align-items: center; background: #0f172a; border: 1px solid #6366f1; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; margin: 4px; gap: 8px;}
-  .test-pill input { accent-color: #6366f1; width: 16px; height: 16px; cursor: pointer;}
-
-  /* --- NEW v4.4 COCKPIT STYLES --- */
   .cockpit-macro { display: flex; gap: 25px; align-items: center; background: #0f172a; padding: 20px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 25px;}
   .cockpit-gauge { position: relative; width: 220px; height: 220px; flex-shrink: 0; display:flex; justify-content:center; align-items:center;}
   .gauge-text-overlay { position: absolute; text-align: center; pointer-events: none;}
@@ -145,8 +141,8 @@
   </div>
 </div>
 
-<h1>Ultimate Study OS v4.4</h1>
-<div class="subtitle">Cockpit Edition + GATE Weightage Engine</div>
+<h1>Ultimate Study OS v4.5</h1>
+<div class="subtitle">Cockpit Edition + Complete 6-Tier Chapter Cycle</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
@@ -259,6 +255,7 @@
   </div>
 </div>
 
+<!-- COACH'S LAG ANALYZER -->
 <div class="panel">
   <h2 style="margin-top:0; color:#38bdf8;">🧠 Coach's Lag Analyzer (Last 14 Days Window)</h2>
   <div class="lag-grid">
@@ -274,6 +271,7 @@
   </div>
 </div>
 
+<!-- UPGRADED REQ 4: MASTER COCKPIT MATRIX TRACKER (6-TIER) -->
 <div class="panel">
   <h2 style="margin-top:0; color:#facc15; margin-bottom:15px;">🎯 Master GATE 2027 Cockpit (Live Readiness)</h2>
   
@@ -290,7 +288,7 @@
 
   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; border-top:1px dashed #475569; padding-top:20px;">
     <div>
-      <h3 style="margin:0; color:#38bdf8;">🔬 Micro Inspector (Board Matrix)</h3>
+      <h3 style="margin:0; color:#38bdf8;">🔬 Micro Inspector (6-Tier Chapter Matrix)</h3>
       <p style="margin:2px 0 0 0; font-size:0.85rem; color:#94a3b8;">Clicking a card above teleports this inspector to that subject.</p>
     </div>
     <div style="width: 250px;">
@@ -313,18 +311,11 @@
           <th>Prac. Sheet</th>
           <th>PYQs</th>
           <th>Short Notes</th>
+          <th>Test</th> <!-- REQ ADDED -->
         </tr>
       </thead>
       <tbody id="matrixBody"></tbody>
     </table>
-  </div>
-
-  <div style="margin-top:20px; background:#0f172a; padding:15px; border-radius:12px; border:1px solid #334155;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <span style="font-size:0.9rem; font-weight:bold; color:#8b5cf6;">🧪 MOCK TESTS RECORDED (Counts for 20% of Subject Mastery)</span>
-      <button class="btn-small" style="padding:6px 12px; font-size:0.8rem;" onclick="addMatrixTest()">+ Add Test Log</button>
-    </div>
-    <div id="matrixTestContainer"></div>
   </div>
 </div>
 
@@ -373,17 +364,14 @@
 </div>
 
 <script>
-// Data Architecture (SAFE KEYS PRESERVED)
 const GATE_SUBJECTS = ["Engineering Math", "General Aptitude", "Networks", "Electronic Devices (EDC)", "Analog Circuits", "Digital Circuits", "Signals & Systems", "Control Systems", "Communications", "Electromagnetics (EMT)"];
 
-// OFFICIAL GATE WEIGHTAGE MAP
 const GATE_WEIGHTS = {
   "Engineering Math": 0.13, "General Aptitude": 0.15, "Networks": 0.10, "Signals & Systems": 0.10,
   "Control Systems": 0.09, "Electronic Devices (EDC)": 0.09, "Analog Circuits": 0.09, "Digital Circuits": 0.09,
   "Communications": 0.08, "Electromagnetics (EMT)": 0.08
 };
 
-// DB Keys 
 let sessions = JSON.parse(localStorage.getItem('studySessions_v4')) || [];
 let dailyGoal = parseFloat(localStorage.getItem('dailyGoal_v4')) || 6;
 let tenQData = JSON.parse(localStorage.getItem('tenQData_v4')) || {};
@@ -392,10 +380,9 @@ let mistakeData = JSON.parse(localStorage.getItem('mistakeData_v4')) || {};
 let snRevData = JSON.parse(localStorage.getItem('snRevData_v43')) || {};
 let matrixDb = JSON.parse(localStorage.getItem('matrixDb_v43')) || {};
 
-// Init missing structures
 GATE_SUBJECTS.forEach(sub => { 
   if(!dbHierarchy[sub]) dbHierarchy[sub] = {}; 
-  if(!matrixDb[sub]) matrixDb[sub] = { ticks: {}, tests: [] };
+  if(!matrixDb[sub]) matrixDb[sub] = { ticks: {} };
 });
 
 document.getElementById('dailyGoalInput').value = dailyGoal;
@@ -418,17 +405,15 @@ function initApp() {
 
 function checkSunday() { if(new Date().getDay() === 0) document.getElementById('sundayBanner').style.display = 'block'; }
 function logSundaySN() {
-  const val = document.getElementById('sundaySNInput').value.trim();
-  if(!val) return;
+  const val = document.getElementById('sundaySNInput').value.trim(); if(!val) return;
   sessions.push({ id: Date.now(), subject: "Short Notes Compilation", chapter: "Sunday War-Room", topic: val, activity: "Revision", startTime: Date.now(), duration: 3600, dateStr: new Date().toLocaleDateString('en-GB'), isManual: true });
   localStorage.setItem('studySessions_v4', JSON.stringify(sessions));
   document.getElementById('sundaySNInput').value = ''; alert("Compiled Short Note secured!"); updateDashboard();
 }
 
-// COCKPIT CALCULATION ENGINE
+// COCKPIT CALCULATION ENGINE (UPDATED FOR 6 TICKS)
 function getSubjectScore(sub) {
   const chaps = Object.keys(dbHierarchy[sub] || {});
-  const tests = matrixDb[sub]?.tests || [];
   if(chaps.length === 0) return 0;
 
   let totalSyllabusSize = 0;
@@ -438,17 +423,17 @@ function getSubjectScore(sub) {
   chaps.forEach(c => {
     const topicSize = Math.max(dbHierarchy[sub][c].length, 1);
     const chapWeight = topicSize / totalSyllabusSize;
-    const ticks = matrixDb[sub].ticks[c] || [false,false,false,false,false];
+    
+    // Auto-migrate 5-length array to 6-length safely
+    if(!matrixDb[sub].ticks[c]) matrixDb[sub].ticks[c] = [false,false,false,false,false,false];
+    else if(matrixDb[sub].ticks[c].length === 5) matrixDb[sub].ticks[c].push(false);
+
+    const ticks = matrixDb[sub].ticks[c];
     let tickedCount = 0; ticks.forEach(tk => { if(tk) tickedCount++; });
-    weightedChapCompletion += (tickedCount / 5) * chapWeight;
+    weightedChapCompletion += (tickedCount / 6) * chapWeight; // Divided by 6 now
   });
 
-  let testCompletion = 0;
-  let doneTests = 0; tests.forEach(t => { if(t.done) doneTests++; });
-  if(tests.length > 0) testCompletion = doneTests / tests.length;
-
-  if(tests.length === 0) return Math.round(weightedChapCompletion * 100);
-  return Math.round((weightedChapCompletion * 80) + (testCompletion * 20));
+  return Math.round(weightedChapCompletion * 100);
 }
 
 function renderCockpit() {
@@ -489,25 +474,23 @@ function renderCockpit() {
   renderMatrix();
 }
 
-function teleportInspector(sub) {
-  document.getElementById('matrixSubSelect').value = sub;
-  renderCockpit(); // Re-renders highlights
-}
+function teleportInspector(sub) { document.getElementById('matrixSubSelect').value = sub; renderCockpit(); }
 
 function renderMatrix() {
   const sub = document.getElementById('matrixSubSelect').value;
   document.getElementById('matrixSubName').innerText = `${sub} Micro Matrix`;
   const tbody = document.getElementById('matrixBody'); tbody.innerHTML = '';
-  const testCont = document.getElementById('matrixTestContainer'); testCont.innerHTML = '';
   
   const chaps = Object.keys(dbHierarchy[sub] || {});
-  if(!matrixDb[sub]) matrixDb[sub] = { ticks: {}, tests: [] };
+  if(!matrixDb[sub]) matrixDb[sub] = { ticks: {} };
 
-  if(chaps.length === 0) tbody.innerHTML = `<tr><td colspan="6" style="color:#64748b; padding:20px;">No chapters defined in Syllabus Builder.</td></tr>`;
+  if(chaps.length === 0) tbody.innerHTML = `<tr><td colspan="7" style="color:#64748b; padding:20px;">No chapters defined in Syllabus Builder.</td></tr>`;
   else {
     let totalSize = 0; chaps.forEach(c => totalSize += Math.max(dbHierarchy[sub][c].length, 1));
     chaps.forEach(c => {
-      if(!matrixDb[sub].ticks[c]) matrixDb[sub].ticks[c] = [false,false,false,false,false];
+      if(!matrixDb[sub].ticks[c]) matrixDb[sub].ticks[c] = [false,false,false,false,false,false];
+      else if(matrixDb[sub].ticks[c].length === 5) matrixDb[sub].ticks[c].push(false); // SAFE MIGRATION
+
       const t = matrixDb[sub].ticks[c];
       const sz = Math.max(dbHierarchy[sub][c].length, 1);
       const wtPct = Math.round((sz/totalSize)*100);
@@ -520,21 +503,8 @@ function renderMatrix() {
           <td><input type="checkbox" class="matrix-cb" ${t[2]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 2)"></td>
           <td><input type="checkbox" class="matrix-cb" ${t[3]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 3)"></td>
           <td><input type="checkbox" class="matrix-cb" ${t[4]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 4)"></td>
+          <td><input type="checkbox" class="matrix-cb" ${t[5]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 5)"></td>
         </tr>
-      `);
-    });
-  }
-
-  const tests = matrixDb[sub].tests || [];
-  if(tests.length === 0) testCont.innerHTML = `<span style="color:#64748b; font-size:0.85rem;">No mixed mock tests recorded.</span>`;
-  else {
-    tests.forEach((tObj, idx) => {
-      testCont.insertAdjacentHTML('beforeend', `
-        <div class="test-pill" style="${tObj.done ? 'border-color:#10b981; color:#34d399;' : ''}">
-          <input type="checkbox" ${tObj.done?'checked':''} onchange="toggleMatrixTest('${sub}', ${idx})">
-          <span>${tObj.name}</span>
-          <span style="cursor:pointer; color:#ef4444; margin-left:4px;" onclick="delMatrixTest('${sub}', ${idx})">✕</span>
-        </div>
       `);
     });
   }
@@ -545,11 +515,7 @@ function renderMatrix() {
 }
 
 function toggleMatrixTick(s, c, col) { matrixDb[s].ticks[c][col] = !matrixDb[s].ticks[c][col]; localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
-function addMatrixTest() { const s = document.getElementById('matrixSubSelect').value; const n = prompt("Test Name:"); if(!n) return; matrixDb[s].tests.push({ name: n.trim(), done: false }); localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
-function toggleMatrixTest(s, i) { matrixDb[s].tests[i].done = !matrixDb[s].tests[i].done; localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
-function delMatrixTest(s, i) { matrixDb[s].tests.splice(i, 1); localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
 
-// TIER 3 BUILDER TRIGGERS COCKPIT
 function renderBuilderUI() {
   const sub = document.getElementById('manageSubjectSelect').value; const cont = document.getElementById('syllabusContainer'); const dl = document.getElementById('chapterList');
   cont.innerHTML = ''; dl.innerHTML = ''; const chaps = dbHierarchy[sub] || {};
@@ -624,7 +590,7 @@ function updateDashboard() {
 }
 
 function dlChart(id,n) { const a=document.createElement('a'); a.download=`GATE_${n}.png`; a.href=document.getElementById(id).toDataURL('image/png'); a.click(); }
-function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v44_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v45_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
 function restoreSystem(e) { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const d=JSON.parse(ev.target.result); ['sessions','dailyGoal','tenQData','dbHierarchy','mistakeData','snRevData','matrixDb'].forEach(k=>{if(d[k]) localStorage.setItem(k==='dbHierarchy'?'syllabusDb_v4':k==='sessions'?'studySessions_v4':k==='dailyGoal'?'dailyGoal_v4':k==='tenQData'?'tenQData_v4':k==='mistakeData'?'mistakeData_v4':`${k}_v43`, JSON.stringify(d[k]))}); alert("Restored!"); location.reload(); }catch(err){alert("Invalid file");} }; r.readAsText(f); }
 
 window.onload = initApp;
