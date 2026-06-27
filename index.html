@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.2 (Accountability Edition)</title>
+<title>Ultimate Study OS v4.3 (Accountability Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -36,10 +36,11 @@
   .ritual-btn.done { background: #10b981; border-color: #059669; color: white; }
   .ritual-btn:hover { transform: scale(1.05); }
 
-  /* 10Q Grid */
+  /* 10Q Grid & SN Grid */
   .q10-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 10px;}
   .q10-btn { background: #0f172a; color: #94a3b8; border: 2px solid #334155; border-radius: 8px; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; font-size: 0.9rem;}
   .q10-btn.active { background: #10b981; color: #fff; border-color: #059669; }
+  .sn-btn.active { background: #3b82f6; color: #fff; border-color: #2563eb; }
 
   /* Subtopic Builder UI */
   .builder-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;}
@@ -87,7 +88,7 @@
 
   #manualEntryForm { display: none; margin-top: 15px; padding: 15px; background: #0f172a; border-radius: 12px; border: 1px dashed #475569; }
   
-  /* --- NEW ADDITIVE CSS STYLES --- */
+  /* --- PREVIOUS ADDED STYLES --- */
   .lag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;}
   .lag-box { background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;}
   .lag-title { font-size: 0.95rem; color: #94a3b8; margin: 0 0 8px 0; font-weight: bold;}
@@ -100,12 +101,44 @@
   
   .backup-bar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 20px 25px; border-radius: 16px; max-width: 1400px; margin: 0 auto 30px auto; border: 1px dashed #475569;}
 
-  @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } }
+  /* --- NEW v4.3 STYLES --- */
+  .sunday-banner { display: none; background: linear-gradient(90deg, #b45309, #d97706); color: #fff; padding: 20px; border-radius: 16px; max-width: 1400px; margin: 0 auto 20px auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); border: 2px solid #fef08a;}
+  .sunday-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px;}
+  
+  .weekly-report-box { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;}
+  .rep-stat { background: #1e293b; padding: 12px; border-radius: 8px; border-left: 4px solid #38bdf8;}
+  .rep-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; font-weight: bold;}
+  .rep-num { font-size: 1.4rem; font-weight: bold; color: #f8fafc; margin-top: 4px;}
+
+  .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px;}
+  .matrix-table th { background: #0f172a; padding: 12px; color: #38bdf8; font-size: 0.85rem; text-transform: uppercase; border: none;}
+  .matrix-table td { background: #334155; padding: 12px; text-align: center; border: none;}
+  .matrix-table td:first-child { border-radius: 8px 0 0 8px; text-align: left; font-weight: bold; color: #facc15;}
+  .matrix-table td:last-child { border-radius: 0 8px 8px 0;}
+  .matrix-cb { width: 22px; height: 22px; accent-color: #10b981; cursor: pointer;}
+  
+  .test-pill { display: inline-flex; align-items: center; background: #0f172a; border: 1px solid #6366f1; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; margin: 4px; gap: 8px;}
+  .test-pill input { accent-color: #6366f1; width: 16px; height: 16px; cursor: pointer;}
+
+  @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar, .sunday-inner { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } }
 </style>
 </head>
 <body>
 
-<h1>Ultimate Study OS v4.2</h1>
+<div class="sunday-banner" id="sundayBanner">
+  <div class="sunday-inner">
+    <div>
+      <h2 style="margin:0; font-size:1.4rem;">🚨 SUNDAY PROTOCOL ACTIVE</h2>
+      <p style="margin:5px 0 0 0; font-size:0.95rem; opacity:0.9;">No new lectures today. Your sole objective is compiling & securing Short Notes.</p>
+    </div>
+    <div style="display:flex; gap:10px; width: 100%; max-width: 400px;">
+      <input type="text" id="sundaySNInput" placeholder="Subject - Chapter compiled..." style="background:#fff; color:#000; border:none;">
+      <button class="btn-small" style="background:#0f172a; color:#fff; border: 1px solid #fff;" onclick="logSundaySN()">+ Log SN</button>
+    </div>
+  </div>
+</div>
+
+<h1>Ultimate Study OS v4.3</h1>
 <div class="subtitle">3-Tier Mastery Tracker + Daily Accountability</div>
 
 <div class="dashboard-grid">
@@ -119,8 +152,11 @@
       <button id="mistakeTickBtn" class="ritual-btn" onclick="toggleMistakeTick()">❌ Pending</button>
     </div>
 
-    <p style="font-size: 0.85rem; color:#94a3b8; border-top: 1px solid #334155; padding-top: 10px;">Mark 10+ questions solved per subject:</p>
+    <p style="font-size: 0.85rem; color:#94a3b8; margin-bottom:5px;">Mark 10+ questions solved per subject:</p>
     <div class="q10-grid" id="q10Grid"></div>
+
+    <p style="font-size: 0.85rem; color:#94a3b8; border-top: 1px solid #334155; padding-top: 12px; margin-top:15px; margin-bottom:5px;">Mark Short Notes actively recalled today:</p>
+    <div class="q10-grid" id="snGrid"></div>
   </div>
 
   <div class="panel" style="margin-bottom: 0;">
@@ -216,7 +252,6 @@
   </div>
 </div>
 
-<!-- NEW ADDITION 1: COACH'S LAG ANALYZER -->
 <div class="panel">
   <h2 style="margin-top:0; color:#38bdf8;">🧠 Coach's Lag Analyzer (Last 14 Days Window)</h2>
   <div class="lag-grid">
@@ -229,6 +264,44 @@
       <p class="lag-title">👻 GHOST SUBJECTS (0 Hours Logged in 14 Days)</p>
       <div id="ghostSubjectsContainer" style="margin-top:8px;"></div>
     </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+    <h2 style="margin:0; color:#facc15;">🎯 Master Subject Tracker (Board Matrix)</h2>
+    <div style="width: 250px;">
+      <select id="matrixSubSelect" onchange="renderMatrix()"></select>
+    </div>
+  </div>
+  
+  <div class="progress-wrapper" style="margin-top:15px; background:#0f172a;">
+    <div class="goal-text"><span id="matrixSubName">Subject Progress</span><span id="matrixPctText" style="color:#10b981;">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-fill" id="matrixProgressBar" style="background:#10b981;"></div></div>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th style="text-align:left;">Chapter Name</th>
+          <th>Videos</th>
+          <th>Class Notes</th>
+          <th>Prac. Sheet</th>
+          <th>PYQs</th>
+          <th>Short Notes</th>
+        </tr>
+      </thead>
+      <tbody id="matrixBody"></tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:20px; background:#0f172a; padding:15px; border-radius:12px; border:1px solid #334155;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <span style="font-size:0.9rem; font-weight:bold; color:#8b5cf6;">🧪 MOCK TESTS RECORDED (Counts for 20% of Subject Mastery)</span>
+      <button class="btn-small" style="padding:6px 12px; font-size:0.8rem;" onclick="addMatrixTest()">+ Add Test Log</button>
+    </div>
+    <div id="matrixTestContainer"></div>
   </div>
 </div>
 
@@ -249,8 +322,10 @@
 </div>
 
 <div class="panel">
-  <h2 style="margin-top:0; color:#fff;">Weekly Milestones</h2>
+  <h2 style="margin-top:0; color:#fff;">Weekly Milestones & Live Breakdown</h2>
   <div class="weekly-grid" id="weeklyGrid"></div>
+  
+  <div class="weekly-report-box" id="weeklyReportContainer"></div>
 </div>
 
 <div class="panel">
@@ -263,7 +338,6 @@
   </div>
 </div>
 
-<!-- NEW ADDITION 2: DATA INSURANCE POLICY -->
 <div class="backup-bar">
   <div>
     <h3 style="margin:0; color:#facc15; font-size:1.05rem;">🛡️ Database Safe-Guard</h3>
@@ -287,8 +361,15 @@ let tenQData = JSON.parse(localStorage.getItem('tenQData_v4')) || {};
 let dbHierarchy = JSON.parse(localStorage.getItem('syllabusDb_v4')) || {}; 
 let mistakeData = JSON.parse(localStorage.getItem('mistakeData_v4')) || {}; 
 
-// Initialize Missing Subjects
-GATE_SUBJECTS.forEach(sub => { if(!dbHierarchy[sub]) dbHierarchy[sub] = {}; });
+// NEW v4.3 Keys
+let snRevData = JSON.parse(localStorage.getItem('snRevData_v43')) || {};
+let matrixDb = JSON.parse(localStorage.getItem('matrixDb_v43')) || {};
+
+// Initialize Missing DB Structures
+GATE_SUBJECTS.forEach(sub => { 
+  if(!dbHierarchy[sub]) dbHierarchy[sub] = {}; 
+  if(!matrixDb[sub]) matrixDb[sub] = { ticks: {}, tests: [] };
+});
 
 // Globals
 document.getElementById('dailyGoalInput').value = dailyGoal;
@@ -306,13 +387,35 @@ function parseDateStr(str) { const p = str.split('/'); return p.length===3 ? new
 
 // --- INIT ---
 function initApp() {
-  const selects = [document.getElementById('subjectSelect'), document.getElementById('manageSubjectSelect')];
+  const selects = [document.getElementById('subjectSelect'), document.getElementById('manageSubjectSelect'), document.getElementById('matrixSubSelect')];
   selects.forEach(sel => { sel.innerHTML = ''; GATE_SUBJECTS.forEach(sub => sel.add(new Option(sub, sub))); });
   
-  renderBuilderUI(); updateTrackerChapters(); renderDailyRituals(); updateDashboard();
+  checkSunday();
+  renderBuilderUI(); updateTrackerChapters(); renderDailyRituals(); renderMatrix(); updateDashboard();
 }
 
-// --- SYLLABUS BUILDER (TIER 3) ---
+// REQ 3: SUNDAY CHECK
+function checkSunday() {
+  if(new Date().getDay() === 0) {
+    document.getElementById('sundayBanner').style.display = 'block';
+  }
+}
+
+function logSundaySN() {
+  const val = document.getElementById('sundaySNInput').value.trim();
+  if(!val) return;
+  const todayStr = new Date().toLocaleDateString('en-GB');
+  sessions.push({
+    id: Date.now(), subject: "Short Notes Compilation", chapter: "Sunday War-Room", topic: val,
+    activity: "Revision", startTime: Date.now(), duration: 3600, dateStr: todayStr, isManual: true
+  });
+  localStorage.setItem('studySessions_v4', JSON.stringify(sessions));
+  document.getElementById('sundaySNInput').value = '';
+  alert("Compiled Short Note secured in database!");
+  updateDashboard();
+}
+
+// TIER 3 BUILDER
 function renderBuilderUI() {
   const sub = document.getElementById('manageSubjectSelect').value;
   const container = document.getElementById('syllabusContainer');
@@ -323,6 +426,7 @@ function renderBuilderUI() {
   
   if(Object.keys(chapters).length === 0) {
     container.innerHTML = '<p style="color:#64748b;">No chapters built yet. Add one above!</p>';
+    renderMatrix();
     return;
   }
 
@@ -348,6 +452,7 @@ function renderBuilderUI() {
       </div>
     `);
   }
+  renderMatrix();
 }
 
 function addSyllabusNode() {
@@ -375,7 +480,6 @@ function editTopic(sub, chap, index) {
 function delTopic(sub, chap, index) { dbHierarchy[sub][chap].splice(index, 1); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters();}
 function delChapter(sub, chap) { if(confirm(`Delete entire chapter '${chap}'?`)){ delete dbHierarchy[sub][chap]; localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters(); } }
 
-// --- LIVE TRACKER DROPDOWNS ---
 function updateTrackerChapters() {
   const sub = document.getElementById('subjectSelect').value;
   const chapSel = document.getElementById('chapterSelect');
@@ -395,7 +499,7 @@ function updateTrackerTopics() {
   }
 }
 
-// --- DAILY RITUALS (10Q & MISTAKE) ---
+// DAILY RITUALS & REQ 2 SN REVISED
 function renderDailyRituals() {
   const dateVal = document.getElementById('ritualDate').value;
   if(!dateVal) return;
@@ -403,22 +507,31 @@ function renderDailyRituals() {
   
   const btn = document.getElementById('mistakeTickBtn');
   const isMistakeDone = mistakeData[dateStr] || false;
-  if(isMistakeDone) {
-    btn.className = 'ritual-btn done'; btn.innerHTML = '✅ Done';
-  } else {
-    btn.className = 'ritual-btn'; btn.innerHTML = '❌ Pending';
-  }
+  btn.className = isMistakeDone ? 'ritual-btn done' : 'ritual-btn';
+  btn.innerHTML = isMistakeDone ? '✅ Done' : '❌ Pending';
 
   const grid = document.getElementById('q10Grid'); grid.innerHTML = '';
+  const sng = document.getElementById('snGrid'); sng.innerHTML = '';
+  
   if(!tenQData[dateStr]) tenQData[dateStr] = {};
+  if(!snRevData[dateStr]) snRevData[dateStr] = {};
 
   GATE_SUBJECTS.forEach(sub => {
-    const isDone = tenQData[dateStr][sub] || false;
+    // 10Q
+    const isQ = tenQData[dateStr][sub] || false;
     const qbtn = document.createElement('div');
-    qbtn.className = `q10-btn ${isDone ? 'active' : ''}`;
-    qbtn.innerHTML = `${isDone ? '✅' : '🎯'} ${sub}`;
-    qbtn.onclick = () => { tenQData[dateStr][sub] = !isDone; localStorage.setItem('tenQData_v4', JSON.stringify(tenQData)); renderDailyRituals(); updateDashboard(); };
+    qbtn.className = `q10-btn ${isQ ? 'active' : ''}`;
+    qbtn.innerHTML = `${isQ ? '✅' : '🎯'} ${sub}`;
+    qbtn.onclick = () => { tenQData[dateStr][sub] = !isQ; localStorage.setItem('tenQData_v4', JSON.stringify(tenQData)); renderDailyRituals(); updateDashboard(); };
     grid.appendChild(qbtn);
+
+    // SN Revised
+    const isSN = snRevData[dateStr][sub] || false;
+    const snbtn = document.createElement('div');
+    snbtn.className = `q10-btn sn-btn ${isSN ? 'active' : ''}`;
+    snbtn.innerHTML = `${isSN ? '⚡' : '📖'} ${sub}`;
+    snbtn.onclick = () => { snRevData[dateStr][sub] = !isSN; localStorage.setItem('snRevData_v43', JSON.stringify(snRevData)); renderDailyRituals(); };
+    sng.appendChild(snbtn);
   });
 }
 
@@ -426,13 +539,99 @@ function toggleMistakeTick() {
   const dateVal = document.getElementById('ritualDate').value;
   if(!dateVal) return;
   const [y, m, d] = dateVal.split('-'); const dateStr = `${d}/${m}/${y}`;
-  
   mistakeData[dateStr] = !(mistakeData[dateStr] || false);
   localStorage.setItem('mistakeData_v4', JSON.stringify(mistakeData));
   renderDailyRituals();
 }
 
-// --- TIMER & MANUAL LOG ---
+// REQ 4: KAMESH BOARD MATRIX ENGINE
+function renderMatrix() {
+  const sub = document.getElementById('matrixSubSelect').value;
+  document.getElementById('matrixSubName').innerText = `${sub} Mastery`;
+  const tbody = document.getElementById('matrixBody'); tbody.innerHTML = '';
+  const testCont = document.getElementById('matrixTestContainer'); testCont.innerHTML = '';
+  
+  const chaps = Object.keys(dbHierarchy[sub] || {});
+  if(!matrixDb[sub]) matrixDb[sub] = { ticks: {}, tests: [] };
+
+  let totalTicksPossible = chaps.length * 5;
+  let ticksCompleted = 0;
+
+  if(chaps.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:#64748b; padding:20px;">No chapters defined in Syllabus Builder for ${sub}.</td></tr>`;
+  } else {
+    chaps.forEach(c => {
+      if(!matrixDb[sub].ticks[c]) matrixDb[sub].ticks[c] = [false, false, false, false, false];
+      const t = matrixDb[sub].ticks[c];
+      t.forEach(val => { if(val) ticksCompleted++; });
+
+      tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>${c}</td>
+          <td><input type="checkbox" class="matrix-cb" ${t[0]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 0)"></td>
+          <td><input type="checkbox" class="matrix-cb" ${t[1]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 1)"></td>
+          <td><input type="checkbox" class="matrix-cb" ${t[2]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 2)"></td>
+          <td><input type="checkbox" class="matrix-cb" ${t[3]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 3)"></td>
+          <td><input type="checkbox" class="matrix-cb" ${t[4]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 4)"></td>
+        </tr>
+      `);
+    });
+  }
+
+  // Render Tests
+  const tests = matrixDb[sub].tests || [];
+  let testsCompleted = 0;
+  if(tests.length === 0) testCont.innerHTML = `<span style="color:#64748b; font-size:0.85rem;">No mixed mock tests recorded yet.</span>`;
+  else {
+    tests.forEach((tObj, idx) => {
+      if(tObj.done) testsCompleted++;
+      testCont.insertAdjacentHTML('beforeend', `
+        <div class="test-pill" style="${tObj.done ? 'border-color:#10b981; color:#34d399;' : ''}">
+          <input type="checkbox" ${tObj.done?'checked':''} onchange="toggleMatrixTest('${sub}', ${idx})">
+          <span>${tObj.name}</span>
+          <span style="cursor:pointer; color:#ef4444; margin-left:4px;" onclick="delMatrixTest('${sub}', ${idx})">✕</span>
+        </div>
+      `);
+    });
+  }
+
+  // Calculate 80% Chapter Weight + 20% Test Weight
+  let chapScore = totalTicksPossible > 0 ? (ticksCompleted / totalTicksPossible) * 80 : 0;
+  let testScore = tests.length > 0 ? (testsCompleted / tests.length) * 20 : 0;
+  let finalPct = Math.round(chapScore + testScore);
+
+  document.getElementById('matrixPctText').innerText = `${finalPct}%`;
+  document.getElementById('matrixProgressBar').style.width = `${finalPct}%`;
+}
+
+function toggleMatrixTick(sub, chap, col) {
+  matrixDb[sub].ticks[chap][col] = !matrixDb[sub].ticks[chap][col];
+  localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
+  renderMatrix();
+}
+
+function addMatrixTest() {
+  const sub = document.getElementById('matrixSubSelect').value;
+  const tName = prompt("Enter Test Name (e.g., Chapter 1-3 Grand Test):");
+  if(!tName) return;
+  matrixDb[sub].tests.push({ name: tName.trim(), done: false });
+  localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
+  renderMatrix();
+}
+
+function toggleMatrixTest(sub, idx) {
+  matrixDb[sub].tests[idx].done = !matrixDb[sub].tests[idx].done;
+  localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
+  renderMatrix();
+}
+
+function delMatrixTest(sub, idx) {
+  matrixDb[sub].tests.splice(idx, 1);
+  localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
+  renderMatrix();
+}
+
+// TIMER & LOG
 function startSession() {
   currentSession = {
     id: Date.now(), subject: document.getElementById('subjectSelect').value,
@@ -476,7 +675,7 @@ function addManualSession() {
 function updateGoal() { dailyGoal = parseFloat(document.getElementById('dailyGoalInput').value) || 6; localStorage.setItem('dailyGoal_v4', dailyGoal); updateDashboard(); }
 function delSession(id) { if(confirm("Delete record?")) { sessions = sessions.filter(s => s.id !== id); localStorage.setItem('studySessions_v4', JSON.stringify(sessions)); updateDashboard(); } }
 
-// --- RENDER ENGINE ---
+// RENDER ENGINE
 Chart.defaults.color = '#cbd5e1'; Chart.defaults.maintainAspectRatio = false;
 
 function updateDashboard() {
@@ -486,6 +685,11 @@ function updateDashboard() {
   let todaySec = 0; const todayStr = new Date().toLocaleDateString('en-GB');
   let dData = {}, sData = {}, aData = {}, chapData = {};
 
+  // REQ 1: Weekly Breakdown variables
+  const now = new Date();
+  const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())).setHours(0,0,0,0);
+  let weekTotal = 0, weekLec = 0, weekPrac = 0, weekRev = 0;
+
   sorted.forEach(s => {
     if(s.dateStr === todayStr) todaySec += s.duration;
     const hierarchyStr = `${s.chapter !== 'General' ? s.chapter : 'General'} <br><small style="color:#facc15">➔ ${s.topic !== 'General' ? s.topic : 'General'}</small>`;
@@ -494,6 +698,14 @@ function updateDashboard() {
     const h = s.duration / 3600;
     dData[s.dateStr] = (dData[s.dateStr]||0)+h; sData[s.subject] = (sData[s.subject]||0)+h; aData[s.activity] = (aData[s.activity]||0)+h;
     if(s.chapter && s.chapter !== 'General') { const k = `${s.subject}: ${s.chapter}`; chapData[k] = (chapData[k]||0)+h; }
+
+    // Aggregate Weekly Live Data
+    if(s.startTime >= startOfWeek) {
+      weekTotal += h;
+      if(s.activity === 'Class') weekLec += h;
+      else if(s.activity === 'Practice' || s.activity === 'Test') weekPrac += h;
+      else if(s.activity === 'Revision') weekRev += h;
+    }
   });
 
   const th = todaySec/3600, pct = Math.min((th/dailyGoal)*100, 100);
@@ -506,6 +718,14 @@ function updateDashboard() {
     sessions.forEach(s => { const w = Math.floor((s.startTime-start)/604800000)+1; wData[w] = (wData[w]||0)+s.duration; });
     Object.keys(wData).sort((a,b)=>a-b).forEach(w => wGrid.insertAdjacentHTML('beforeend', `<div class="week-card"><h3>Week ${w}</h3><p>${Math.floor(wData[w]/3600)}h ${Math.round(((wData[w]/3600)%1)*60)}m</p></div>`));
   } else wGrid.innerHTML = '<p style="color:#94a3b8">No data yet.</p>';
+
+  // Render REQ 1 Weekly Breakdown Box
+  document.getElementById('weeklyReportContainer').innerHTML = `
+    <div class="rep-stat"><div class="rep-label">This Week Total</div><div class="rep-num" style="color:#38bdf8;">${weekTotal.toFixed(1)}h</div></div>
+    <div class="rep-stat" style="border-color:#f59e0b;"><div class="rep-label">Lectures Watched</div><div class="rep-num">${weekLec.toFixed(1)}h</div></div>
+    <div class="rep-stat" style="border-color:#10b981;"><div class="rep-label">QP / PYQ Solved</div><div class="rep-num">${weekPrac.toFixed(1)}h</div></div>
+    <div class="rep-stat" style="border-color:#8b5cf6;"><div class="rep-label">Slide / SN Revision</div><div class="rep-num">${weekRev.toFixed(1)}h</div></div>
+  `;
 
   const sDates = Object.keys(dData).sort((a,b) => parseDateStr(a)-parseDateStr(b));
   const l7D = sDates.slice(-7), l7V = l7D.map(d=>dData[d]);
@@ -527,11 +747,8 @@ function updateDashboard() {
   if(charts.lt) charts.lt.destroy();
   charts.lt = new Chart(document.getElementById('longTermChart'), { type: 'line', data: { labels: sDates, datasets: [{ label: 'Actual', data: sDates.map(d=>dData[d]), borderColor: '#00ffd5', backgroundColor: 'rgba(0, 255, 213, 0.1)', borderWidth:2, tension:0.4 }, { label: 'Goal', data: sDates.map(d=>dailyGoal), borderColor: '#facc15', backgroundColor: 'transparent', borderWidth:2, tension:0.4 }] }, options: { responsive:true, maintainAspectRatio:false, scales:{ y:{beginAtZero:true, suggestedMax: dailyGoal+2} } } });
 
-  // TRIGGER NEW ADDED LOGIC
   runLagAnalysis();
 }
-
-/* --- NEW ADDED LOGIC MODULES --- */
 
 function runLagAnalysis() {
   const now = Date.now();
@@ -581,11 +798,11 @@ function dlChart(canvasId, name) {
 }
 
 function backupSystem() {
-  const db = { sessions, dailyGoal, tenQData, dbHierarchy, mistakeData };
+  const db = { sessions, dailyGoal, tenQData, dbHierarchy, mistakeData, snRevData, matrixDb };
   const blob = new Blob([JSON.stringify(db)], {type: "application/json"});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `GATE_OS_Backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `GATE_OS_v43_Backup_${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 }
 
@@ -601,6 +818,8 @@ function restoreSystem(event) {
       if(d.tenQData) localStorage.setItem('tenQData_v4', JSON.stringify(d.tenQData));
       if(d.dbHierarchy) localStorage.setItem('syllabusDb_v4', JSON.stringify(d.dbHierarchy));
       if(d.mistakeData) localStorage.setItem('mistakeData_v4', JSON.stringify(d.mistakeData));
+      if(d.snRevData) localStorage.setItem('snRevData_v43', JSON.stringify(d.snRevData));
+      if(d.matrixDb) localStorage.setItem('matrixDb_v43', JSON.stringify(d.matrixDb));
       alert("Database Restored Successfully! Refreshing OS...");
       location.reload();
     } catch(err) { alert("Invalid Backup File!"); }
