@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.3 (Accountability Edition)</title>
+<title>Ultimate Study OS v4.4 (Cockpit Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -14,7 +14,6 @@
   .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; max-width: 1400px; margin: 0 auto 20px auto; }
   .panel { background: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); max-width: 1400px; margin: 0 auto 20px auto; }
   
-  /* Inputs & Controls */
   .control-group { margin-bottom: 15px; }
   label { display: block; margin-bottom: 5px; color: #cbd5e1; font-weight: bold; font-size: 0.9rem; }
   select, input[type="text"], input[type="number"], input[type="date"] { 
@@ -29,27 +28,23 @@
   .btn-small { background: #38bdf8; color: #000; padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; white-space: nowrap;}
   .btn-main:hover, .btn-small:hover { transform: scale(1.02); }
 
-  /* Daily Ritual Block */
   .ritual-block { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 15px; border-radius: 10px; margin-top: 10px; margin-bottom: 20px; border: 1px solid #475569;}
   .ritual-text { font-size: 0.95rem; font-weight: bold; color: #f8fafc; flex: 1; margin-right: 15px; line-height: 1.4;}
   .ritual-btn { background: #0f172a; border: 2px solid #ef4444; color: #ef4444; border-radius: 8px; padding: 8px 15px; font-weight: bold; cursor: pointer; transition: 0.2s; white-space: nowrap; font-size: 0.95rem;}
   .ritual-btn.done { background: #10b981; border-color: #059669; color: white; }
   .ritual-btn:hover { transform: scale(1.05); }
 
-  /* 10Q Grid & SN Grid */
   .q10-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 10px;}
   .q10-btn { background: #0f172a; color: #94a3b8; border: 2px solid #334155; border-radius: 8px; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; font-size: 0.9rem;}
   .q10-btn.active { background: #10b981; color: #fff; border-color: #059669; }
   .sn-btn.active { background: #3b82f6; color: #fff; border-color: #2563eb; }
 
-  /* Subtopic Builder UI */
   .builder-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;}
   .chapter-block { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
   .chapter-title { color: #facc15; font-size: 1.1rem; margin-top: 0; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 5px;}
   .chapter-title button { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;}
   .pill-container { display: flex; flex-direction: column; gap: 8px; }
   
-  /* Pill Styling */
   .pill { 
     background: #334155; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; color: #cbd5e1; 
     display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; border: 1px solid #475569;
@@ -60,26 +55,22 @@
   .pill-actions span { cursor: pointer; font-size: 1.1rem; transition: transform 0.2s; }
   .pill-actions span:hover { transform: scale(1.2); }
 
-  /* Progress Bar */
   .progress-wrapper { margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; }
   .progress-bar-bg { background: #334155; height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
   .progress-fill { background: linear-gradient(90deg, #38bdf8, #8b5cf6); height: 100%; width: 0%; transition: width 0.5s ease; }
   .goal-text { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; }
 
-  /* Charts */
   .charts-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
   .chart-box { background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; position: relative; height: 250px; display: flex; justify-content: center; align-items: center; }
   .chart-box-wide { grid-column: 1 / -1; height: 300px; }
   .chart-box-full { height: 400px; width: 100%; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; box-sizing: border-box; position: relative;}
   
-  /* Weekly Grid */
   .weekly-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
   .week-card { background: #334155; padding: 15px 20px; border-radius: 12px; min-width: 150px; text-align: center; border: 1px solid #475569; }
   .week-card h3 { margin: 0 0 10px 0; color: #38bdf8; font-size: 1.2rem; }
   .week-card p { margin: 0; font-size: 1.5rem; font-weight: bold; color: #facc15; }
   .weekly-grid::-webkit-scrollbar { height: 8px; } .weekly-grid::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; } .weekly-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 
-  /* Table */
   table { width: 100%; border-collapse: collapse; margin-top: 15px; }
   th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; font-size: 0.9rem;}
   th { background: #0f172a; color: #38bdf8; }
@@ -88,7 +79,6 @@
 
   #manualEntryForm { display: none; margin-top: 15px; padding: 15px; background: #0f172a; border-radius: 12px; border: 1px dashed #475569; }
   
-  /* --- PREVIOUS ADDED STYLES --- */
   .lag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;}
   .lag-box { background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;}
   .lag-title { font-size: 0.95rem; color: #94a3b8; margin: 0 0 8px 0; font-weight: bold;}
@@ -101,7 +91,6 @@
   
   .backup-bar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 20px 25px; border-radius: 16px; max-width: 1400px; margin: 0 auto 30px auto; border: 1px dashed #475569;}
 
-  /* --- NEW v4.3 STYLES --- */
   .sunday-banner { display: none; background: linear-gradient(90deg, #b45309, #d97706); color: #fff; padding: 20px; border-radius: 16px; max-width: 1400px; margin: 0 auto 20px auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); border: 2px solid #fef08a;}
   .sunday-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px;}
   
@@ -120,6 +109,24 @@
   .test-pill { display: inline-flex; align-items: center; background: #0f172a; border: 1px solid #6366f1; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; margin: 4px; gap: 8px;}
   .test-pill input { accent-color: #6366f1; width: 16px; height: 16px; cursor: pointer;}
 
+  /* --- NEW v4.4 COCKPIT STYLES --- */
+  .cockpit-macro { display: flex; gap: 25px; align-items: center; background: #0f172a; padding: 20px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 25px;}
+  .cockpit-gauge { position: relative; width: 220px; height: 220px; flex-shrink: 0; display:flex; justify-content:center; align-items:center;}
+  .gauge-text-overlay { position: absolute; text-align: center; pointer-events: none;}
+  .gauge-text-overlay h3 { margin: 0; font-size: 2.2rem; color: #38bdf8;}
+  .gauge-text-overlay span { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: bold;}
+  
+  .cockpit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; width: 100%;}
+  .sub-mini-card { background: #1e293b; border: 1px solid #334155; padding: 12px 15px; border-radius: 10px; cursor: pointer; transition: 0.2s; position: relative;}
+  .sub-mini-card:hover { transform: translateY(-3px); border-color: #38bdf8;}
+  .sub-mini-card.active-inspect { border: 2px solid #facc15; background: #23314d;}
+  .mini-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;}
+  .mini-name { font-size: 0.9rem; font-weight: bold; color: #f8fafc; line-height: 1.2;}
+  .mini-wt { font-size: 0.7rem; background: #334155; color: #cbd5e1; padding: 2px 6px; border-radius: 4px; font-weight: bold;}
+  .mini-bar-bg { background: #334155; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 6px;}
+  .mini-bar-fill { height: 100%; background: #10b981; transition: width 0.4s;}
+
+  @media (max-width: 900px) { .cockpit-macro { flex-direction: column; } .cockpit-gauge { margin: 0 auto; } }
   @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar, .sunday-inner { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } }
 </style>
 </head>
@@ -138,8 +145,8 @@
   </div>
 </div>
 
-<h1>Ultimate Study OS v4.3</h1>
-<div class="subtitle">3-Tier Mastery Tracker + Daily Accountability</div>
+<h1>Ultimate Study OS v4.4</h1>
+<div class="subtitle">Cockpit Edition + GATE Weightage Engine</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
@@ -268,8 +275,24 @@
 </div>
 
 <div class="panel">
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-    <h2 style="margin:0; color:#facc15;">🎯 Master Subject Tracker (Board Matrix)</h2>
+  <h2 style="margin-top:0; color:#facc15; margin-bottom:15px;">🎯 Master GATE 2027 Cockpit (Live Readiness)</h2>
+  
+  <div class="cockpit-macro">
+    <div class="cockpit-gauge">
+      <canvas id="gateReadyChart"></canvas>
+      <div class="gauge-text-overlay">
+        <h3 id="trueGateScoreText">0%</h3>
+        <span>GATE Ready</span>
+      </div>
+    </div>
+    <div class="cockpit-grid" id="cockpitGrid"></div>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; border-top:1px dashed #475569; padding-top:20px;">
+    <div>
+      <h3 style="margin:0; color:#38bdf8;">🔬 Micro Inspector (Board Matrix)</h3>
+      <p style="margin:2px 0 0 0; font-size:0.85rem; color:#94a3b8;">Clicking a card above teleports this inspector to that subject.</p>
+    </div>
     <div style="width: 250px;">
       <select id="matrixSubSelect" onchange="renderMatrix()"></select>
     </div>
@@ -284,7 +307,7 @@
     <table class="matrix-table">
       <thead>
         <tr>
-          <th style="text-align:left;">Chapter Name</th>
+          <th style="text-align:left;">Chapter Name (Weighted by Topics size)</th>
           <th>Videos</th>
           <th>Class Notes</th>
           <th>Prac. Sheet</th>
@@ -324,7 +347,6 @@
 <div class="panel">
   <h2 style="margin-top:0; color:#fff;">Weekly Milestones & Live Breakdown</h2>
   <div class="weekly-grid" id="weeklyGrid"></div>
-  
   <div class="weekly-report-box" id="weeklyReportContainer"></div>
 </div>
 
@@ -354,220 +376,145 @@
 // Data Architecture (SAFE KEYS PRESERVED)
 const GATE_SUBJECTS = ["Engineering Math", "General Aptitude", "Networks", "Electronic Devices (EDC)", "Analog Circuits", "Digital Circuits", "Signals & Systems", "Control Systems", "Communications", "Electromagnetics (EMT)"];
 
+// OFFICIAL GATE WEIGHTAGE MAP
+const GATE_WEIGHTS = {
+  "Engineering Math": 0.13, "General Aptitude": 0.15, "Networks": 0.10, "Signals & Systems": 0.10,
+  "Control Systems": 0.09, "Electronic Devices (EDC)": 0.09, "Analog Circuits": 0.09, "Digital Circuits": 0.09,
+  "Communications": 0.08, "Electromagnetics (EMT)": 0.08
+};
+
 // DB Keys 
 let sessions = JSON.parse(localStorage.getItem('studySessions_v4')) || [];
 let dailyGoal = parseFloat(localStorage.getItem('dailyGoal_v4')) || 6;
 let tenQData = JSON.parse(localStorage.getItem('tenQData_v4')) || {};
 let dbHierarchy = JSON.parse(localStorage.getItem('syllabusDb_v4')) || {}; 
 let mistakeData = JSON.parse(localStorage.getItem('mistakeData_v4')) || {}; 
-
-// NEW v4.3 Keys
 let snRevData = JSON.parse(localStorage.getItem('snRevData_v43')) || {};
 let matrixDb = JSON.parse(localStorage.getItem('matrixDb_v43')) || {};
 
-// Initialize Missing DB Structures
+// Init missing structures
 GATE_SUBJECTS.forEach(sub => { 
   if(!dbHierarchy[sub]) dbHierarchy[sub] = {}; 
   if(!matrixDb[sub]) matrixDb[sub] = { ticks: {}, tests: [] };
 });
 
-// Globals
 document.getElementById('dailyGoalInput').value = dailyGoal;
 document.getElementById('manDate').valueAsDate = new Date();
 document.getElementById('ritualDate').valueAsDate = new Date();
 
-let currentSession = null;
-let timerInterval = null;
-let charts = {};
+let currentSession = null, timerInterval = null, charts = {};
 
-// Utility
 function formatDur(sec) { const h = String(Math.floor(sec/3600)).padStart(2,'0'), m = String(Math.floor((sec%3600)/60)).padStart(2,'0'), s = String(sec%60).padStart(2,'0'); return `${h}:${m}:${s}`; }
 function formatAMPM(d) { let h = d.getHours(), m = d.getMinutes(), ampm = h>=12?'PM':'AM'; h=h%12||12; m=m<10?'0'+m:m; return `${h}:${m} ${ampm}`; }
 function parseDateStr(str) { const p = str.split('/'); return p.length===3 ? new Date(`${p[2]}-${p[1]}-${p[0]}`).getTime() : 0; }
 
-// --- INIT ---
 function initApp() {
   const selects = [document.getElementById('subjectSelect'), document.getElementById('manageSubjectSelect'), document.getElementById('matrixSubSelect')];
   selects.forEach(sel => { sel.innerHTML = ''; GATE_SUBJECTS.forEach(sub => sel.add(new Option(sub, sub))); });
   
   checkSunday();
-  renderBuilderUI(); updateTrackerChapters(); renderDailyRituals(); renderMatrix(); updateDashboard();
+  renderBuilderUI(); updateTrackerChapters(); renderDailyRituals(); renderCockpit(); updateDashboard();
 }
 
-// REQ 3: SUNDAY CHECK
-function checkSunday() {
-  if(new Date().getDay() === 0) {
-    document.getElementById('sundayBanner').style.display = 'block';
-  }
-}
-
+function checkSunday() { if(new Date().getDay() === 0) document.getElementById('sundayBanner').style.display = 'block'; }
 function logSundaySN() {
   const val = document.getElementById('sundaySNInput').value.trim();
   if(!val) return;
-  const todayStr = new Date().toLocaleDateString('en-GB');
-  sessions.push({
-    id: Date.now(), subject: "Short Notes Compilation", chapter: "Sunday War-Room", topic: val,
-    activity: "Revision", startTime: Date.now(), duration: 3600, dateStr: todayStr, isManual: true
-  });
+  sessions.push({ id: Date.now(), subject: "Short Notes Compilation", chapter: "Sunday War-Room", topic: val, activity: "Revision", startTime: Date.now(), duration: 3600, dateStr: new Date().toLocaleDateString('en-GB'), isManual: true });
   localStorage.setItem('studySessions_v4', JSON.stringify(sessions));
-  document.getElementById('sundaySNInput').value = '';
-  alert("Compiled Short Note secured in database!");
-  updateDashboard();
+  document.getElementById('sundaySNInput').value = ''; alert("Compiled Short Note secured!"); updateDashboard();
 }
 
-// TIER 3 BUILDER
-function renderBuilderUI() {
-  const sub = document.getElementById('manageSubjectSelect').value;
-  const container = document.getElementById('syllabusContainer');
-  const dataList = document.getElementById('chapterList');
-  
-  container.innerHTML = ''; dataList.innerHTML = '';
-  const chapters = dbHierarchy[sub] || {};
-  
-  if(Object.keys(chapters).length === 0) {
-    container.innerHTML = '<p style="color:#64748b;">No chapters built yet. Add one above!</p>';
-    renderMatrix();
-    return;
-  }
+// COCKPIT CALCULATION ENGINE
+function getSubjectScore(sub) {
+  const chaps = Object.keys(dbHierarchy[sub] || {});
+  const tests = matrixDb[sub]?.tests || [];
+  if(chaps.length === 0) return 0;
 
-  for(const [chapName, topics] of Object.entries(chapters)) {
-    dataList.appendChild(new Option(chapName, chapName));
-    
-    let pillsHTML = topics.map((t, i) => `
-      <div class="pill">
-        <div class="pill-text">${t}</div>
-        <div class="pill-actions">
-          <span title="Edit Topic" onclick="editTopic('${sub}', '${chapName}', ${i})" style="color:#38bdf8;">✏️</span>
-          <span title="Delete Topic" onclick="delTopic('${sub}', '${chapName}', ${i})" style="color:#ef4444;">✕</span>
+  let totalSyllabusSize = 0;
+  chaps.forEach(c => { totalSyllabusSize += Math.max(dbHierarchy[sub][c].length, 1); });
+
+  let weightedChapCompletion = 0;
+  chaps.forEach(c => {
+    const topicSize = Math.max(dbHierarchy[sub][c].length, 1);
+    const chapWeight = topicSize / totalSyllabusSize;
+    const ticks = matrixDb[sub].ticks[c] || [false,false,false,false,false];
+    let tickedCount = 0; ticks.forEach(tk => { if(tk) tickedCount++; });
+    weightedChapCompletion += (tickedCount / 5) * chapWeight;
+  });
+
+  let testCompletion = 0;
+  let doneTests = 0; tests.forEach(t => { if(t.done) doneTests++; });
+  if(tests.length > 0) testCompletion = doneTests / tests.length;
+
+  if(tests.length === 0) return Math.round(weightedChapCompletion * 100);
+  return Math.round((weightedChapCompletion * 80) + (testCompletion * 20));
+}
+
+function renderCockpit() {
+  const grid = document.getElementById('cockpitGrid'); grid.innerHTML = '';
+  const currentSelectedInInspector = document.getElementById('matrixSubSelect').value;
+  let grandGateWeightedScore = 0;
+
+  GATE_SUBJECTS.forEach(sub => {
+    const score = getSubjectScore(sub);
+    const wt = Math.round((GATE_WEIGHTS[sub] || 0.08) * 100);
+    grandGateWeightedScore += (score * (GATE_WEIGHTS[sub] || 0.08));
+
+    const isInspect = sub === currentSelectedInInspector;
+    grid.insertAdjacentHTML('beforeend', `
+      <div class="sub-mini-card ${isInspect?'active-inspect':''}" onclick="teleportInspector('${sub}')">
+        <div class="mini-top">
+          <span class="mini-name">${sub}</span>
+          <span class="mini-wt">${wt}% GATE</span>
         </div>
-      </div>
-    `).join('');
-    
-    if(topics.length === 0) pillsHTML = `<span style="font-size:0.8rem; color:#64748b;">No topics added.</span>`;
-
-    container.insertAdjacentHTML('beforeend', `
-      <div class="chapter-block">
-        <h3 class="chapter-title">${chapName} <button onclick="delChapter('${sub}', '${chapName}')">Delete Chapter</button></h3>
-        <div class="pill-container">${pillsHTML}</div>
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:#cbd5e1;">
+          <span>Progress</span><span style="color:#facc15">${score}%</span>
+        </div>
+        <div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${score}%"></div></div>
       </div>
     `);
-  }
+  });
+
+  const finalGateReadiness = Math.round(grandGateWeightedScore);
+  document.getElementById('trueGateScoreText').innerText = `${finalGateReadiness}%`;
+
+  if(charts.gateReady) charts.gateReady.destroy();
+  charts.gateReady = new Chart(document.getElementById('gateReadyChart'), {
+    type: 'doughnut',
+    data: { datasets: [{ data: [finalGateReadiness, 100-finalGateReadiness], backgroundColor: ['#38bdf8', '#1e293b'], borderWidth: 0 }] },
+    options: { cutout: '78%', plugins: { tooltip: {enabled: false} } }
+  });
+
   renderMatrix();
 }
 
-function addSyllabusNode() {
-  const sub = document.getElementById('manageSubjectSelect').value;
-  const chap = document.getElementById('chapterInput').value.trim();
-  const top = document.getElementById('topicInput').value.trim();
-  if(!chap) return alert("Please enter a Chapter name.");
-  if(!dbHierarchy[sub][chap]) dbHierarchy[sub][chap] = []; 
-  if(top && !dbHierarchy[sub][chap].includes(top)) dbHierarchy[sub][chap].push(top); 
-  localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy));
-  document.getElementById('topicInput').value = ''; 
-  renderBuilderUI(); updateTrackerChapters();
+function teleportInspector(sub) {
+  document.getElementById('matrixSubSelect').value = sub;
+  renderCockpit(); // Re-renders highlights
 }
 
-function editTopic(sub, chap, index) {
-  const currentTopic = dbHierarchy[sub][chap][index];
-  const newTopic = prompt("Edit your topic name:", currentTopic);
-  if(newTopic !== null && newTopic.trim() !== "") {
-    dbHierarchy[sub][chap][index] = newTopic.trim();
-    localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy));
-    renderBuilderUI(); updateTrackerChapters();
-  }
-}
-
-function delTopic(sub, chap, index) { dbHierarchy[sub][chap].splice(index, 1); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters();}
-function delChapter(sub, chap) { if(confirm(`Delete entire chapter '${chap}'?`)){ delete dbHierarchy[sub][chap]; localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters(); } }
-
-function updateTrackerChapters() {
-  const sub = document.getElementById('subjectSelect').value;
-  const chapSel = document.getElementById('chapterSelect');
-  chapSel.innerHTML = '<option value="General">General / Full Subject</option>';
-  const chapters = Object.keys(dbHierarchy[sub] || {});
-  chapters.forEach(c => chapSel.add(new Option(c, c)));
-  updateTrackerTopics();
-}
-
-function updateTrackerTopics() {
-  const sub = document.getElementById('subjectSelect').value;
-  const chap = document.getElementById('chapterSelect').value;
-  const topSel = document.getElementById('topicSelect');
-  topSel.innerHTML = '<option value="General">General / Full Chapter</option>';
-  if(chap !== 'General' && dbHierarchy[sub][chap]) {
-    dbHierarchy[sub][chap].forEach(t => topSel.add(new Option(t, t)));
-  }
-}
-
-// DAILY RITUALS & REQ 2 SN REVISED
-function renderDailyRituals() {
-  const dateVal = document.getElementById('ritualDate').value;
-  if(!dateVal) return;
-  const [y, m, d] = dateVal.split('-'); const dateStr = `${d}/${m}/${y}`;
-  
-  const btn = document.getElementById('mistakeTickBtn');
-  const isMistakeDone = mistakeData[dateStr] || false;
-  btn.className = isMistakeDone ? 'ritual-btn done' : 'ritual-btn';
-  btn.innerHTML = isMistakeDone ? '✅ Done' : '❌ Pending';
-
-  const grid = document.getElementById('q10Grid'); grid.innerHTML = '';
-  const sng = document.getElementById('snGrid'); sng.innerHTML = '';
-  
-  if(!tenQData[dateStr]) tenQData[dateStr] = {};
-  if(!snRevData[dateStr]) snRevData[dateStr] = {};
-
-  GATE_SUBJECTS.forEach(sub => {
-    // 10Q
-    const isQ = tenQData[dateStr][sub] || false;
-    const qbtn = document.createElement('div');
-    qbtn.className = `q10-btn ${isQ ? 'active' : ''}`;
-    qbtn.innerHTML = `${isQ ? '✅' : '🎯'} ${sub}`;
-    qbtn.onclick = () => { tenQData[dateStr][sub] = !isQ; localStorage.setItem('tenQData_v4', JSON.stringify(tenQData)); renderDailyRituals(); updateDashboard(); };
-    grid.appendChild(qbtn);
-
-    // SN Revised
-    const isSN = snRevData[dateStr][sub] || false;
-    const snbtn = document.createElement('div');
-    snbtn.className = `q10-btn sn-btn ${isSN ? 'active' : ''}`;
-    snbtn.innerHTML = `${isSN ? '⚡' : '📖'} ${sub}`;
-    snbtn.onclick = () => { snRevData[dateStr][sub] = !isSN; localStorage.setItem('snRevData_v43', JSON.stringify(snRevData)); renderDailyRituals(); };
-    sng.appendChild(snbtn);
-  });
-}
-
-function toggleMistakeTick() {
-  const dateVal = document.getElementById('ritualDate').value;
-  if(!dateVal) return;
-  const [y, m, d] = dateVal.split('-'); const dateStr = `${d}/${m}/${y}`;
-  mistakeData[dateStr] = !(mistakeData[dateStr] || false);
-  localStorage.setItem('mistakeData_v4', JSON.stringify(mistakeData));
-  renderDailyRituals();
-}
-
-// REQ 4: KAMESH BOARD MATRIX ENGINE
 function renderMatrix() {
   const sub = document.getElementById('matrixSubSelect').value;
-  document.getElementById('matrixSubName').innerText = `${sub} Mastery`;
+  document.getElementById('matrixSubName').innerText = `${sub} Micro Matrix`;
   const tbody = document.getElementById('matrixBody'); tbody.innerHTML = '';
   const testCont = document.getElementById('matrixTestContainer'); testCont.innerHTML = '';
   
   const chaps = Object.keys(dbHierarchy[sub] || {});
   if(!matrixDb[sub]) matrixDb[sub] = { ticks: {}, tests: [] };
 
-  let totalTicksPossible = chaps.length * 5;
-  let ticksCompleted = 0;
-
-  if(chaps.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="color:#64748b; padding:20px;">No chapters defined in Syllabus Builder for ${sub}.</td></tr>`;
-  } else {
+  if(chaps.length === 0) tbody.innerHTML = `<tr><td colspan="6" style="color:#64748b; padding:20px;">No chapters defined in Syllabus Builder.</td></tr>`;
+  else {
+    let totalSize = 0; chaps.forEach(c => totalSize += Math.max(dbHierarchy[sub][c].length, 1));
     chaps.forEach(c => {
-      if(!matrixDb[sub].ticks[c]) matrixDb[sub].ticks[c] = [false, false, false, false, false];
+      if(!matrixDb[sub].ticks[c]) matrixDb[sub].ticks[c] = [false,false,false,false,false];
       const t = matrixDb[sub].ticks[c];
-      t.forEach(val => { if(val) ticksCompleted++; });
+      const sz = Math.max(dbHierarchy[sub][c].length, 1);
+      const wtPct = Math.round((sz/totalSize)*100);
 
       tbody.insertAdjacentHTML('beforeend', `
         <tr>
-          <td>${c}</td>
+          <td>${c} <small style="color:#94a3b8; font-weight:normal;">(${wtPct}% chapter weight)</small></td>
           <td><input type="checkbox" class="matrix-cb" ${t[0]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 0)"></td>
           <td><input type="checkbox" class="matrix-cb" ${t[1]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 1)"></td>
           <td><input type="checkbox" class="matrix-cb" ${t[2]?'checked':''} onchange="toggleMatrixTick('${sub}', '${c}', 2)"></td>
@@ -578,13 +525,10 @@ function renderMatrix() {
     });
   }
 
-  // Render Tests
   const tests = matrixDb[sub].tests || [];
-  let testsCompleted = 0;
-  if(tests.length === 0) testCont.innerHTML = `<span style="color:#64748b; font-size:0.85rem;">No mixed mock tests recorded yet.</span>`;
+  if(tests.length === 0) testCont.innerHTML = `<span style="color:#64748b; font-size:0.85rem;">No mixed mock tests recorded.</span>`;
   else {
     tests.forEach((tObj, idx) => {
-      if(tObj.done) testsCompleted++;
       testCont.insertAdjacentHTML('beforeend', `
         <div class="test-pill" style="${tObj.done ? 'border-color:#10b981; color:#34d399;' : ''}">
           <input type="checkbox" ${tObj.done?'checked':''} onchange="toggleMatrixTest('${sub}', ${idx})">
@@ -595,237 +539,93 @@ function renderMatrix() {
     });
   }
 
-  // Calculate 80% Chapter Weight + 20% Test Weight
-  let chapScore = totalTicksPossible > 0 ? (ticksCompleted / totalTicksPossible) * 80 : 0;
-  let testScore = tests.length > 0 ? (testsCompleted / tests.length) * 20 : 0;
-  let finalPct = Math.round(chapScore + testScore);
-
-  document.getElementById('matrixPctText').innerText = `${finalPct}%`;
-  document.getElementById('matrixProgressBar').style.width = `${finalPct}%`;
+  const subScore = getSubjectScore(sub);
+  document.getElementById('matrixPctText').innerText = `${subScore}%`;
+  document.getElementById('matrixProgressBar').style.width = `${subScore}%`;
 }
 
-function toggleMatrixTick(sub, chap, col) {
-  matrixDb[sub].ticks[chap][col] = !matrixDb[sub].ticks[chap][col];
-  localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
-  renderMatrix();
-}
+function toggleMatrixTick(s, c, col) { matrixDb[s].ticks[c][col] = !matrixDb[s].ticks[c][col]; localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
+function addMatrixTest() { const s = document.getElementById('matrixSubSelect').value; const n = prompt("Test Name:"); if(!n) return; matrixDb[s].tests.push({ name: n.trim(), done: false }); localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
+function toggleMatrixTest(s, i) { matrixDb[s].tests[i].done = !matrixDb[s].tests[i].done; localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
+function delMatrixTest(s, i) { matrixDb[s].tests.splice(i, 1); localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
 
-function addMatrixTest() {
-  const sub = document.getElementById('matrixSubSelect').value;
-  const tName = prompt("Enter Test Name (e.g., Chapter 1-3 Grand Test):");
-  if(!tName) return;
-  matrixDb[sub].tests.push({ name: tName.trim(), done: false });
-  localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
-  renderMatrix();
-}
-
-function toggleMatrixTest(sub, idx) {
-  matrixDb[sub].tests[idx].done = !matrixDb[sub].tests[idx].done;
-  localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
-  renderMatrix();
-}
-
-function delMatrixTest(sub, idx) {
-  matrixDb[sub].tests.splice(idx, 1);
-  localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
-  renderMatrix();
-}
-
-// TIMER & LOG
-function startSession() {
-  currentSession = {
-    id: Date.now(), subject: document.getElementById('subjectSelect').value,
-    chapter: document.getElementById('chapterSelect').value, topic: document.getElementById('topicSelect').value,
-    activity: document.getElementById('activitySelect').value, startTime: Date.now(), dateStr: new Date().toLocaleDateString('en-GB')
-  };
-  ['startBtn','subjectSelect','chapterSelect','topicSelect'].forEach(id => document.getElementById(id).style.display = id==='startBtn'?'none':'');
-  ['subjectSelect','chapterSelect','topicSelect'].forEach(id => document.getElementById(id).disabled = true);
-  document.getElementById('stopBtn').style.display = 'block';
-  timerInterval = setInterval(() => document.getElementById('timerDisplay').innerText = formatDur(Math.floor((Date.now()-currentSession.startTime)/1000)), 1000);
-}
-
-function stopSession() {
-  clearInterval(timerInterval);
-  const dur = Math.floor((Date.now() - currentSession.startTime) / 1000);
-  if(dur > 10) {
-    currentSession.endTime = Date.now(); currentSession.duration = dur;
-    sessions.push(currentSession); localStorage.setItem('studySessions_v4', JSON.stringify(sessions));
+// TIER 3 BUILDER TRIGGERS COCKPIT
+function renderBuilderUI() {
+  const sub = document.getElementById('manageSubjectSelect').value; const cont = document.getElementById('syllabusContainer'); const dl = document.getElementById('chapterList');
+  cont.innerHTML = ''; dl.innerHTML = ''; const chaps = dbHierarchy[sub] || {};
+  if(Object.keys(chaps).length === 0) { cont.innerHTML = '<p style="color:#64748b;">No chapters built.</p>'; return; }
+  for(const [cName, tops] of Object.entries(chaps)) {
+    dl.appendChild(new Option(cName, cName));
+    let pH = tops.map((t, i) => `<div class="pill"><div class="pill-text">${t}</div><div class="pill-actions"><span onclick="editTopic('${sub}','${cName}',${i})" style="color:#38bdf8;">✏️</span><span onclick="delTopic('${sub}','${cName}',${i})" style="color:#ef4444;">✕</span></div></div>`).join('');
+    cont.insertAdjacentHTML('beforeend', `<div class="chapter-block"><h3 class="chapter-title">${cName} <button onclick="delChapter('${sub}','${cName}')">Delete</button></h3><div class="pill-container">${pH||'<span style="font-size:0.8rem; color:#64748b;">No topics</span>'}</div></div>`);
   }
-  currentSession = null; document.getElementById('timerDisplay').innerText = "00:00:00";
-  document.getElementById('startBtn').style.display = 'block'; document.getElementById('stopBtn').style.display = 'none';
-  ['subjectSelect','chapterSelect','topicSelect'].forEach(id => document.getElementById(id).disabled = false);
-  updateDashboard();
 }
+function addSyllabusNode() { const s = document.getElementById('manageSubjectSelect').value, c = document.getElementById('chapterInput').value.trim(), t = document.getElementById('topicInput').value.trim(); if(!c) return; if(!dbHierarchy[s][c]) dbHierarchy[s][c] = []; if(t && !dbHierarchy[s][c].includes(t)) dbHierarchy[s][c].push(t); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); document.getElementById('topicInput').value = ''; renderBuilderUI(); updateTrackerChapters(); renderCockpit(); }
+function editTopic(s,c,i) { const nt = prompt("Edit topic:", dbHierarchy[s][c][i]); if(nt){ dbHierarchy[s][c][i] = nt.trim(); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters(); renderCockpit(); } }
+function delTopic(s,c,i) { dbHierarchy[s][c].splice(i, 1); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters(); renderCockpit(); }
+function delChapter(s,c) { if(confirm("Delete?")){ delete dbHierarchy[s][c]; localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters(); renderCockpit(); } }
 
-function toggleManualEntry() { const f = document.getElementById('manualEntryForm'); f.style.display = f.style.display === 'block' ? 'none' : 'block'; }
-function addManualSession() {
-  const dateVal = document.getElementById('manDate').value; const mins = parseInt(document.getElementById('manMins').value);
-  if(!dateVal || isNaN(mins) || mins <= 0) return alert("Valid date & minutes needed.");
-  const [y, m, d] = dateVal.split('-'); const fakeTime = new Date(y, m-1, d, 12, 0, 0).getTime();
+function updateTrackerChapters() { const s = document.getElementById('subjectSelect').value, cs = document.getElementById('chapterSelect'); cs.innerHTML = '<option value="General">General</option>'; Object.keys(dbHierarchy[s]||{}).forEach(c=>cs.add(new Option(c,c))); updateTrackerTopics(); }
+function updateTrackerTopics() { const s = document.getElementById('subjectSelect').value, c = document.getElementById('chapterSelect').value, ts = document.getElementById('topicSelect'); ts.innerHTML = '<option value="General">General</option>'; if(c!=='General'&&dbHierarchy[s][c]) dbHierarchy[s][c].forEach(t=>ts.add(new Option(t,t))); }
 
-  sessions.push({
-    id: Date.now(), subject: document.getElementById('subjectSelect').value, chapter: document.getElementById('chapterSelect').value,
-    topic: document.getElementById('topicSelect').value, activity: document.getElementById('activitySelect').value,
-    startTime: fakeTime, endTime: fakeTime + (mins*60000), duration: mins*60, dateStr: `${d}/${m}/${y}`, isManual: true
+function renderDailyRituals() {
+  const dv = document.getElementById('ritualDate').value; if(!dv) return;
+  const [y,m,d] = dv.split('-'); const ds = `${d}/${m}/${y}`;
+  const btn = document.getElementById('mistakeTickBtn'); btn.className = mistakeData[ds] ? 'ritual-btn done' : 'ritual-btn'; btn.innerHTML = mistakeData[ds] ? '✅ Done' : '❌ Pending';
+  const g = document.getElementById('q10Grid'), sg = document.getElementById('snGrid'); g.innerHTML = ''; sg.innerHTML = '';
+  if(!tenQData[ds]) tenQData[ds] = {}; if(!snRevData[ds]) snRevData[ds] = {};
+  GATE_SUBJECTS.forEach(sub => {
+    const isQ = tenQData[ds][sub], qb = document.createElement('div'); qb.className = `q10-btn ${isQ?'active':''}`; qb.innerHTML = `${isQ?'✅':'🎯'} ${sub}`; qb.onclick = ()=>{ tenQData[ds][sub]=!isQ; localStorage.setItem('tenQData_v4',JSON.stringify(tenQData)); renderDailyRituals(); updateDashboard(); }; g.appendChild(qb);
+    const isS = snRevData[ds][sub], sb = document.createElement('div'); sb.className = `q10-btn sn-btn ${isS?'active':''}`; sb.innerHTML = `${isS?'⚡':'📖'} ${sub}`; sb.onclick = ()=>{ snRevData[ds][sub]=!isS; localStorage.setItem('snRevData_v43',JSON.stringify(snRevData)); renderDailyRituals(); }; sg.appendChild(sb);
   });
-  localStorage.setItem('studySessions_v4', JSON.stringify(sessions));
-  document.getElementById('manMins').value = ''; toggleManualEntry(); updateDashboard();
 }
+function toggleMistakeTick() { const dv = document.getElementById('ritualDate').value; if(!dv) return; const [y,m,d] = dv.split('-'); mistakeData[`${d}/${m}/${y}`] = !mistakeData[`${d}/${m}/${y}`]; localStorage.setItem('mistakeData_v4',JSON.stringify(mistakeData)); renderDailyRituals(); }
 
-function updateGoal() { dailyGoal = parseFloat(document.getElementById('dailyGoalInput').value) || 6; localStorage.setItem('dailyGoal_v4', dailyGoal); updateDashboard(); }
-function delSession(id) { if(confirm("Delete record?")) { sessions = sessions.filter(s => s.id !== id); localStorage.setItem('studySessions_v4', JSON.stringify(sessions)); updateDashboard(); } }
+function startSession() { currentSession = { id: Date.now(), subject: document.getElementById('subjectSelect').value, chapter: document.getElementById('chapterSelect').value, topic: document.getElementById('topicSelect').value, activity: document.getElementById('activitySelect').value, startTime: Date.now(), dateStr: new Date().toLocaleDateString('en-GB') }; ['startBtn','subjectSelect','chapterSelect','topicSelect'].forEach(id=>document.getElementById(id).style.display=id==='startBtn'?'none':''); ['subjectSelect','chapterSelect','topicSelect'].forEach(id=>document.getElementById(id).disabled=true); document.getElementById('stopBtn').style.display='block'; timerInterval = setInterval(()=>document.getElementById('timerDisplay').innerText=formatDur(Math.floor((Date.now()-currentSession.startTime)/1000)), 1000); }
+function stopSession() { clearInterval(timerInterval); const dur = Math.floor((Date.now()-currentSession.startTime)/1000); if(dur>10){ currentSession.endTime=Date.now(); currentSession.duration=dur; sessions.push(currentSession); localStorage.setItem('studySessions_v4',JSON.stringify(sessions)); } currentSession=null; document.getElementById('timerDisplay').innerText="00:00:00"; document.getElementById('startBtn').style.display='block'; document.getElementById('stopBtn').style.display='none'; ['subjectSelect','chapterSelect','topicSelect'].forEach(id=>document.getElementById(id).disabled=false); updateDashboard(); }
+function toggleManualEntry() { const f = document.getElementById('manualEntryForm'); f.style.display = f.style.display==='block'?'none':'block'; }
+function addManualSession() { const dv = document.getElementById('manDate').value, m = parseInt(document.getElementById('manMins').value); if(!dv||isNaN(m)||m<=0) return; const [y,mo,d]=dv.split('-'), ft=new Date(y,mo-1,d,12,0,0).getTime(); sessions.push({ id:Date.now(), subject:document.getElementById('subjectSelect').value, chapter:document.getElementById('chapterSelect').value, topic:document.getElementById('topicSelect').value, activity:document.getElementById('activitySelect').value, startTime:ft, endTime:ft+(m*60000), duration:m*60, dateStr:`${d}/${mo}/${y}`, isManual:true }); localStorage.setItem('studySessions_v4',JSON.stringify(sessions)); document.getElementById('manMins').value=''; toggleManualEntry(); updateDashboard(); }
+function updateGoal() { dailyGoal = parseFloat(document.getElementById('dailyGoalInput').value)||6; localStorage.setItem('dailyGoal_v4',dailyGoal); updateDashboard(); }
+function delSession(id) { if(confirm("Del?")){ sessions=sessions.filter(s=>s.id!==id); localStorage.setItem('studySessions_v4',JSON.stringify(sessions)); updateDashboard(); } }
 
-// RENDER ENGINE
 Chart.defaults.color = '#cbd5e1'; Chart.defaults.maintainAspectRatio = false;
-
 function updateDashboard() {
-  const tbody = document.getElementById('historyTableBody'); tbody.innerHTML = '';
-  const sorted = [...sessions].sort((a,b) => b.startTime - a.startTime);
-  
-  let todaySec = 0; const todayStr = new Date().toLocaleDateString('en-GB');
-  let dData = {}, sData = {}, aData = {}, chapData = {};
+  const tb = document.getElementById('historyTableBody'); tb.innerHTML=''; const srt = [...sessions].sort((a,b)=>b.startTime-a.startTime);
+  let ts=0, tdStr=new Date().toLocaleDateString('en-GB'), dD={}, sD={}, aD={}, cD={};
+  const now=new Date(), sow=new Date(now.setDate(now.getDate()-now.getDay())).setHours(0,0,0,0); let wTot=0, wLec=0, wPr=0, wRv=0;
 
-  // REQ 1: Weekly Breakdown variables
-  const now = new Date();
-  const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())).setHours(0,0,0,0);
-  let weekTotal = 0, weekLec = 0, weekPrac = 0, weekRev = 0;
-
-  sorted.forEach(s => {
-    if(s.dateStr === todayStr) todaySec += s.duration;
-    const hierarchyStr = `${s.chapter !== 'General' ? s.chapter : 'General'} <br><small style="color:#facc15">➔ ${s.topic !== 'General' ? s.topic : 'General'}</small>`;
-    tbody.insertAdjacentHTML('beforeend', `<tr><td>${s.dateStr}</td><td>${s.isManual?"Manual":formatAMPM(new Date(s.startTime))}</td><td><strong>${s.subject}</strong></td><td>${hierarchyStr}</td><td>${s.activity}</td><td>${Math.round(s.duration/60)}m</td><td><button class="del-btn" onclick="delSession(${s.id})">Del</button></td></tr>`);
-    
-    const h = s.duration / 3600;
-    dData[s.dateStr] = (dData[s.dateStr]||0)+h; sData[s.subject] = (sData[s.subject]||0)+h; aData[s.activity] = (aData[s.activity]||0)+h;
-    if(s.chapter && s.chapter !== 'General') { const k = `${s.subject}: ${s.chapter}`; chapData[k] = (chapData[k]||0)+h; }
-
-    // Aggregate Weekly Live Data
-    if(s.startTime >= startOfWeek) {
-      weekTotal += h;
-      if(s.activity === 'Class') weekLec += h;
-      else if(s.activity === 'Practice' || s.activity === 'Test') weekPrac += h;
-      else if(s.activity === 'Revision') weekRev += h;
-    }
+  srt.forEach(s => {
+    if(s.dateStr===tdStr) ts+=s.duration;
+    tb.insertAdjacentHTML('beforeend', `<tr><td>${s.dateStr}</td><td>${s.isManual?"Manual":formatAMPM(new Date(s.startTime))}</td><td><strong>${s.subject}</strong></td><td>${s.chapter} <small style="color:#facc15">➔ ${s.topic}</small></td><td>${s.activity}</td><td>${Math.round(s.duration/60)}m</td><td><button class="del-btn" onclick="delSession(${s.id})">Del</button></td></tr>`);
+    const h = s.duration/3600; dD[s.dateStr]=(dD[s.dateStr]||0)+h; sD[s.subject]=(sD[s.subject]||0)+h; aD[s.activity]=(aD[s.activity]||0)+h;
+    if(s.chapter&&s.chapter!=='General') cD[`${s.subject}: ${s.chapter}`]=(cD[`${s.subject}: ${s.chapter}`]||0)+h;
+    if(s.startTime>=sow){ wTot+=h; if(s.activity==='Class') wLec+=h; else if(s.activity==='Practice'||s.activity==='Test') wPr+=h; else if(s.activity==='Revision') wRv+=h; }
   });
 
-  const th = todaySec/3600, pct = Math.min((th/dailyGoal)*100, 100);
-  document.getElementById('todayLogged').innerText = `Today: ${Math.floor(th)}h ${Math.floor((th%1)*60)}m`;
-  document.getElementById('goalPercent').innerText = `${Math.round(pct)}%`; document.getElementById('goalProgressBar').style.width = `${pct}%`;
+  const th=ts/3600, pct=Math.min((th/dailyGoal)*100, 100); document.getElementById('todayLogged').innerText=`Today: ${Math.floor(th)}h ${Math.floor((th%1)*60)}m`; document.getElementById('goalPercent').innerText=`${Math.round(pct)}%`; document.getElementById('goalProgressBar').style.width=`${pct}%`;
+  const wg=document.getElementById('weeklyGrid'); wg.innerHTML=''; if(sessions.length){ const st=Math.min(...sessions.map(s=>s.startTime)); let wd={}; sessions.forEach(s=>{ const w=Math.floor((s.startTime-st)/604800000)+1; wd[w]=(wd[w]||0)+s.duration; }); Object.keys(wd).sort((a,b)=>a-b).forEach(w=>wg.insertAdjacentHTML('beforeend',`<div class="week-card"><h3>Week ${w}</h3><p>${Math.floor(wd[w]/3600)}h ${Math.round(((wd[w]/3600)%1)*60)}m</p></div>`)); } else wg.innerHTML='<p>No data</p>';
+  document.getElementById('weeklyReportContainer').innerHTML=`<div class="rep-stat"><div class="rep-label">This Week Total</div><div class="rep-num" style="color:#38bdf8;">${wTot.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#f59e0b;"><div class="rep-label">Lectures</div><div class="rep-num">${wLec.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#10b981;"><div class="rep-label">QP / PYQ</div><div class="rep-num">${wPr.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#8b5cf6;"><div class="rep-label">Revision</div><div class="rep-num">${wRv.toFixed(1)}h</div></div>`;
 
-  const wGrid = document.getElementById('weeklyGrid'); wGrid.innerHTML = '';
-  if(sessions.length) {
-    const start = Math.min(...sessions.map(s=>s.startTime)); let wData = {};
-    sessions.forEach(s => { const w = Math.floor((s.startTime-start)/604800000)+1; wData[w] = (wData[w]||0)+s.duration; });
-    Object.keys(wData).sort((a,b)=>a-b).forEach(w => wGrid.insertAdjacentHTML('beforeend', `<div class="week-card"><h3>Week ${w}</h3><p>${Math.floor(wData[w]/3600)}h ${Math.round(((wData[w]/3600)%1)*60)}m</p></div>`));
-  } else wGrid.innerHTML = '<p style="color:#94a3b8">No data yet.</p>';
-
-  // Render REQ 1 Weekly Breakdown Box
-  document.getElementById('weeklyReportContainer').innerHTML = `
-    <div class="rep-stat"><div class="rep-label">This Week Total</div><div class="rep-num" style="color:#38bdf8;">${weekTotal.toFixed(1)}h</div></div>
-    <div class="rep-stat" style="border-color:#f59e0b;"><div class="rep-label">Lectures Watched</div><div class="rep-num">${weekLec.toFixed(1)}h</div></div>
-    <div class="rep-stat" style="border-color:#10b981;"><div class="rep-label">QP / PYQ Solved</div><div class="rep-num">${weekPrac.toFixed(1)}h</div></div>
-    <div class="rep-stat" style="border-color:#8b5cf6;"><div class="rep-label">Slide / SN Revision</div><div class="rep-num">${weekRev.toFixed(1)}h</div></div>
-  `;
-
-  const sDates = Object.keys(dData).sort((a,b) => parseDateStr(a)-parseDateStr(b));
-  const l7D = sDates.slice(-7), l7V = l7D.map(d=>dData[d]);
-
-  if(charts.d) charts.d.destroy();
-  charts.d = new Chart(document.getElementById('dailyChart'), { type: 'bar', data: { labels: l7D, datasets: [{ label: 'Hours', data: l7V, backgroundColor: '#38bdf8', borderRadius:4 }] }, options: { plugins: { title: { display:true, text: 'Daily Output Trend' } } } });
-
-  const q10V = l7D.map(d => { let c=0; if(tenQData[d]) Object.values(tenQData[d]).forEach(v=>{if(v)c++}); return c; });
-  if(charts.q) charts.q.destroy();
-  charts.q = new Chart(document.getElementById('q10Chart'), { type: 'bar', data: { labels: l7D, datasets: [{ label: 'Subjects w/ 10Q Solved', data: q10V, backgroundColor: '#10b981', borderRadius:4 }] }, options: { plugins: { title: { display:true, text: '10Q Consistency (Last 7 Days)' } }, scales:{ y:{beginAtZero:true, suggestedMax:3} } } });
-
-  if(charts.s) charts.s.destroy(); charts.s = new Chart(document.getElementById('subjectChart'), { type: 'pie', data: { labels: Object.keys(sData), datasets: [{ data: Object.values(sData), backgroundColor: ['#f43f5e', '#8b5cf6', '#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#14b8a6'] }] }, options: { plugins: { title: { display:true, text: 'Syllabus Weightage' } } } });
-  if(charts.a) charts.a.destroy(); charts.a = new Chart(document.getElementById('activityChart'), { type: 'doughnut', data: { labels: Object.keys(aData), datasets: [{ data: Object.values(aData), backgroundColor: ['#10b981', '#3b82f6', '#64748b', '#facc15'] }] }, options: { plugins: { title: { display:true, text: 'Quality of Study' } }, cutout: '60%' } });
-
-  const topChap = Object.entries(chapData).sort((a,b)=>b[1]-a[1]).slice(0,15);
-  if(charts.c) charts.c.destroy();
-  charts.c = new Chart(document.getElementById('chapterAnalyticsChart'), { type: 'bar', data: { labels: topChap.map(i=>i[0]), datasets: [{ label: 'Total Hours', data: topChap.map(i=>i[1].toFixed(2)), backgroundColor: '#8b5cf6', borderRadius: 4 }] }, options: { indexAxis: 'y', plugins: { legend: {display: false} } } });
-
-  if(charts.lt) charts.lt.destroy();
-  charts.lt = new Chart(document.getElementById('longTermChart'), { type: 'line', data: { labels: sDates, datasets: [{ label: 'Actual', data: sDates.map(d=>dData[d]), borderColor: '#00ffd5', backgroundColor: 'rgba(0, 255, 213, 0.1)', borderWidth:2, tension:0.4 }, { label: 'Goal', data: sDates.map(d=>dailyGoal), borderColor: '#facc15', backgroundColor: 'transparent', borderWidth:2, tension:0.4 }] }, options: { responsive:true, maintainAspectRatio:false, scales:{ y:{beginAtZero:true, suggestedMax: dailyGoal+2} } } });
-
-  runLagAnalysis();
-}
-
-function runLagAnalysis() {
-  const now = Date.now();
-  const fourteenDaysAgo = now - (14 * 86400000);
-  let activeSec = 0, passiveSec = 0;
-  let recentSubjects = new Set();
-
-  sessions.forEach(s => {
-    if(s.startTime >= fourteenDaysAgo) {
-      recentSubjects.add(s.subject);
-      if(s.activity === 'Practice' || s.activity === 'Test') activeSec += s.duration;
-      else passiveSec += s.duration;
-    }
-  });
-
-  const totalSec = activeSec + passiveSec;
-  const activeRatio = totalSec > 0 ? Math.round((activeSec / totalSec) * 100) : 0;
+  const sd=Object.keys(dD).sort((a,b)=>parseDateStr(a)-parseDateStr(b)), l7=sd.slice(-7);
+  if(charts.d) charts.d.destroy(); charts.d = new Chart(document.getElementById('dailyChart'), { type:'bar', data:{ labels:l7, datasets:[{ label:'Hours', data:l7.map(d=>dD[d]), backgroundColor:'#38bdf8', borderRadius:4 }] }, options:{ plugins:{ title:{display:true, text:'Output Trend'} } } });
+  if(charts.q) charts.q.destroy(); charts.q = new Chart(document.getElementById('q10Chart'), { type:'bar', data:{ labels:l7, datasets:[{ label:'Subjects w/ 10Q', data:l7.map(d=>{ let c=0; if(tenQData[d]) Object.values(tenQData[d]).forEach(v=>{if(v)c++}); return c; }), backgroundColor:'#10b981', borderRadius:4 }] }, options:{ plugins:{ title:{display:true, text:'10Q Consistency'} }, scales:{y:{beginAtZero:true, suggestedMax:3}} } });
+  if(charts.s) charts.s.destroy(); charts.s = new Chart(document.getElementById('subjectChart'), { type:'pie', data:{ labels:Object.keys(sD), datasets:[{ data:Object.values(sD), backgroundColor:['#f43f5e','#8b5cf6','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6'] }] }, options:{ plugins:{ title:{display:true, text:'Syllabus Hours'} } } });
+  if(charts.a) charts.a.destroy(); charts.a = new Chart(document.getElementById('activityChart'), { type:'doughnut', data:{ labels:Object.keys(aD), datasets:[{ data:Object.values(aD), backgroundColor:['#10b981','#3b82f6','#64748b','#facc15'] }] }, options:{ cutout:'60%', plugins:{ title:{display:true, text:'Quality'} } } });
   
-  const rText = document.getElementById('lagRatioText');
-  const rSub = document.getElementById('lagRatioSub');
-  
-  rText.innerText = `${activeRatio}% Active Output`;
-  if(totalSec === 0) {
-    rText.className = 'lag-val'; rSub.innerText = "No study data logged in the last 14 days.";
-  } else if(activeRatio < 40) {
-    rText.className = 'lag-val badge-warn'; rSub.innerText = "⚠️ DANGER: Passive Trap. You are reading/watching too much and solving too little.";
-  } else {
-    rText.className = 'lag-val badge-good'; rSub.innerText = "🟢 Healthy ratio! You are actively testing your brain.";
-  }
+  const tc=Object.entries(cD).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  if(charts.c) charts.c.destroy(); charts.c = new Chart(document.getElementById('chapterAnalyticsChart'), { type:'bar', data:{ labels:tc.map(i=>i[0]), datasets:[{ data:tc.map(i=>i[1].toFixed(2)), backgroundColor:'#8b5cf6', borderRadius:4 }] }, options:{ indexAxis:'y', plugins:{legend:{display:false}} } });
+  if(charts.lt) charts.lt.destroy(); charts.lt = new Chart(document.getElementById('longTermChart'), { type:'line', data:{ labels:sd, datasets:[{ label:'Actual', data:sd.map(d=>dD[d]), borderColor:'#00ffd5', backgroundColor:'rgba(0,255,213,0.1)', borderWidth:2, tension:0.4 }, { label:'Goal', data:sd.map(d=>dailyGoal), borderColor:'#facc15', borderWidth:2, tension:0.4 }] }, options:{ responsive:true, maintainAspectRatio:false } });
 
-  const ghosts = GATE_SUBJECTS.filter(sub => !recentSubjects.has(sub));
-  const ghostContainer = document.getElementById('ghostSubjectsContainer');
-  
-  if(ghosts.length === 0) {
-    ghostContainer.innerHTML = '<span style="color:#34d399; font-size:0.9rem;">None! Excellent syllabus rotation.</span>';
-  } else {
-    ghostContainer.innerHTML = ghosts.map(g => `<span class="ghost-tag">👻 ${g}</span>`).join('');
-  }
+  const fda=Date.now()-(14*86400000); let aSc=0, pSc=0, rec=new Set();
+  sessions.forEach(s=>{ if(s.startTime>=fda){ rec.add(s.subject); if(s.activity==='Practice'||s.activity==='Test') aSc+=s.duration; else pSc+=s.duration; } });
+  const tSc=aSc+pSc, aRt=tSc>0?Math.round((aSc/tSc)*100):0, rtEl=document.getElementById('lagRatioText'), rsEl=document.getElementById('lagRatioSub');
+  rtEl.innerText=`${aRt}% Active`; if(tSc===0){ rtEl.className='lag-val'; rsEl.innerText="No data logged in 14 days."; } else if(aRt<40){ rtEl.className='lag-val badge-warn'; rsEl.innerText="⚠️ Passive Trap: Read less, solve more."; } else { rtEl.className='lag-val badge-good'; rsEl.innerText="🟢 Solid execution ratio!"; }
+  const gh=GATE_SUBJECTS.filter(s=>!rec.has(s)), ghEl=document.getElementById('ghostSubjectsContainer'); ghEl.innerHTML = gh.length?gh.map(g=>`<span class="ghost-tag">👻 ${g}</span>`).join(''):'<span style="color:#34d399">None!</span>';
 }
 
-function dlChart(canvasId, name) {
-  const canvas = document.getElementById(canvasId);
-  const a = document.createElement('a');
-  a.download = `GATE_${name}_${new Date().toISOString().slice(0,10)}.png`;
-  a.href = canvas.toDataURL('image/png');
-  a.click();
-}
-
-function backupSystem() {
-  const db = { sessions, dailyGoal, tenQData, dbHierarchy, mistakeData, snRevData, matrixDb };
-  const blob = new Blob([JSON.stringify(db)], {type: "application/json"});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `GATE_OS_v43_Backup_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-}
-
-function restoreSystem(event) {
-  const file = event.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const d = JSON.parse(e.target.result);
-      if(d.sessions) localStorage.setItem('studySessions_v4', JSON.stringify(d.sessions));
-      if(d.dailyGoal) localStorage.setItem('dailyGoal_v4', d.dailyGoal);
-      if(d.tenQData) localStorage.setItem('tenQData_v4', JSON.stringify(d.tenQData));
-      if(d.dbHierarchy) localStorage.setItem('syllabusDb_v4', JSON.stringify(d.dbHierarchy));
-      if(d.mistakeData) localStorage.setItem('mistakeData_v4', JSON.stringify(d.mistakeData));
-      if(d.snRevData) localStorage.setItem('snRevData_v43', JSON.stringify(d.snRevData));
-      if(d.matrixDb) localStorage.setItem('matrixDb_v43', JSON.stringify(d.matrixDb));
-      alert("Database Restored Successfully! Refreshing OS...");
-      location.reload();
-    } catch(err) { alert("Invalid Backup File!"); }
-  };
-  reader.readAsText(file);
-}
+function dlChart(id,n) { const a=document.createElement('a'); a.download=`GATE_${n}.png`; a.href=document.getElementById(id).toDataURL('image/png'); a.click(); }
+function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v44_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function restoreSystem(e) { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const d=JSON.parse(ev.target.result); ['sessions','dailyGoal','tenQData','dbHierarchy','mistakeData','snRevData','matrixDb'].forEach(k=>{if(d[k]) localStorage.setItem(k==='dbHierarchy'?'syllabusDb_v4':k==='sessions'?'studySessions_v4':k==='dailyGoal'?'dailyGoal_v4':k==='tenQData'?'tenQData_v4':k==='mistakeData'?'mistakeData_v4':`${k}_v43`, JSON.stringify(d[k]))}); alert("Restored!"); location.reload(); }catch(err){alert("Invalid file");} }; r.readAsText(f); }
 
 window.onload = initApp;
 </script>
