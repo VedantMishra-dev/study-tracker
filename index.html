@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.5 (Cockpit Edition)</title>
+<title>Ultimate Study OS v4.6 (Cockpit Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -41,10 +41,10 @@
 
   .builder-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;}
   .chapter-block { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-  .chapter-title { color: #facc15; font-size: 1.1rem; margin-top: 0; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 5px;}
-  .chapter-title button { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;}
-  .pill-container { display: flex; flex-direction: column; gap: 8px; }
+  .chapter-title { color: #facc15; font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px;}
+  .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 0.9rem; font-weight: bold;}
   
+  .pill-container { display: flex; flex-direction: column; gap: 8px; }
   .pill { 
     background: #334155; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; color: #cbd5e1; 
     display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; border: 1px solid #475569;
@@ -91,8 +91,8 @@
   
   .backup-bar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 20px 25px; border-radius: 16px; max-width: 1400px; margin: 0 auto 30px auto; border: 1px dashed #475569;}
 
-  .sunday-banner { display: none; background: linear-gradient(90deg, #b45309, #d97706); color: #fff; padding: 20px; border-radius: 16px; max-width: 1400px; margin: 0 auto 20px auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); border: 2px solid #fef08a;}
-  .sunday-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px;}
+  /* REQ UPDATED: SUNDAY BANNER THEME */
+  .sunday-banner { display: none; background: linear-gradient(90deg, #991b1b, #b45309); color: #fff; padding: 18px 25px; border-radius: 16px; max-width: 1400px; margin: 0 auto 20px auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); border: 2px solid #fef08a;}
   
   .weekly-report-box { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;}
   .rep-stat { background: #1e293b; padding: 12px; border-radius: 8px; border-left: 4px solid #38bdf8;}
@@ -123,26 +123,22 @@
   .mini-bar-fill { height: 100%; background: #10b981; transition: width 0.4s;}
 
   @media (max-width: 900px) { .cockpit-macro { flex-direction: column; } .cockpit-gauge { margin: 0 auto; } }
-  @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar, .sunday-inner { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } }
+  @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } }
 </style>
 </head>
 <body>
 
 <div class="sunday-banner" id="sundayBanner">
-  <div class="sunday-inner">
-    <div>
-      <h2 style="margin:0; font-size:1.4rem;">🚨 SUNDAY PROTOCOL ACTIVE</h2>
-      <p style="margin:5px 0 0 0; font-size:0.97rem; opacity:0.9;">TEST --> ANALYZE --> MISTAKES(BB) --> MAKE SHORT NOTES</p>
-    </div>
-    <div style="display:flex; gap:10px; width: 100%; max-width: 400px;">
-      <input type="text" id="sundaySNInput" placeholder="Subject - Chapter compiled..." style="background:#fff; color:#000; border:none;">
-      <button class="btn-small" style="background:#0f172a; color:#fff; border: 1px solid #fff;" onclick="logSundaySN()">+ Log SN</button>
-    </div>
+  <div style="text-align: center; width: 100%;">
+    <h2 style="margin:0; font-size:1.55rem; letter-spacing:1px; color:#fff;">🚨 SUNDAY PROTOCOL ACTIVE</h2>
+    <p style="margin:6px 0 0 0; font-size:1.05rem; font-weight:bold; color:#fef08a; letter-spacing:0.5px;">
+      TEST ➔ ANALYZE ➔ MISTAKES (BB) ➔ MAKE SHORT NOTES
+    </p>
   </div>
 </div>
 
-<h1>Ultimate Study OS v4.5</h1>
-<div class="subtitle">Cockpit Edition + Complete 6-Tier Chapter Cycle</div>
+<h1>Ultimate Study OS v4.6</h1>
+<div class="subtitle">Cockpit Edition + Smart Chapter Management</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
@@ -255,7 +251,6 @@
   </div>
 </div>
 
-<!-- COACH'S LAG ANALYZER -->
 <div class="panel">
   <h2 style="margin-top:0; color:#38bdf8;">🧠 Coach's Lag Analyzer (Last 14 Days Window)</h2>
   <div class="lag-grid">
@@ -271,7 +266,6 @@
   </div>
 </div>
 
-<!-- UPGRADED REQ 4: MASTER COCKPIT MATRIX TRACKER (6-TIER) -->
 <div class="panel">
   <h2 style="margin-top:0; color:#facc15; margin-bottom:15px;">🎯 Master GATE 2027 Cockpit (Live Readiness)</h2>
   
@@ -311,7 +305,7 @@
           <th>Prac. Sheet</th>
           <th>PYQs</th>
           <th>Short Notes</th>
-          <th>Test</th> <!-- REQ ADDED -->
+          <th>Test</th>
         </tr>
       </thead>
       <tbody id="matrixBody"></tbody>
@@ -404,18 +398,10 @@ function initApp() {
 }
 
 function checkSunday() { if(new Date().getDay() === 0) document.getElementById('sundayBanner').style.display = 'block'; }
-function logSundaySN() {
-  const val = document.getElementById('sundaySNInput').value.trim(); if(!val) return;
-  sessions.push({ id: Date.now(), subject: "Short Notes Compilation", chapter: "Sunday War-Room", topic: val, activity: "Revision", startTime: Date.now(), duration: 3600, dateStr: new Date().toLocaleDateString('en-GB'), isManual: true });
-  localStorage.setItem('studySessions_v4', JSON.stringify(sessions));
-  document.getElementById('sundaySNInput').value = ''; alert("Compiled Short Note secured!"); updateDashboard();
-}
 
-// COCKPIT CALCULATION ENGINE (UPDATED FOR 6 TICKS)
 function getSubjectScore(sub) {
   const chaps = Object.keys(dbHierarchy[sub] || {});
   if(chaps.length === 0) return 0;
-
   let totalSyllabusSize = 0;
   chaps.forEach(c => { totalSyllabusSize += Math.max(dbHierarchy[sub][c].length, 1); });
 
@@ -423,16 +409,12 @@ function getSubjectScore(sub) {
   chaps.forEach(c => {
     const topicSize = Math.max(dbHierarchy[sub][c].length, 1);
     const chapWeight = topicSize / totalSyllabusSize;
-    
-    // Auto-migrate 5-length array to 6-length safely
     if(!matrixDb[sub].ticks[c]) matrixDb[sub].ticks[c] = [false,false,false,false,false,false];
     else if(matrixDb[sub].ticks[c].length === 5) matrixDb[sub].ticks[c].push(false);
-
     const ticks = matrixDb[sub].ticks[c];
     let tickedCount = 0; ticks.forEach(tk => { if(tk) tickedCount++; });
-    weightedChapCompletion += (tickedCount / 6) * chapWeight; // Divided by 6 now
+    weightedChapCompletion += (tickedCount / 6) * chapWeight;
   });
-
   return Math.round(weightedChapCompletion * 100);
 }
 
@@ -449,13 +431,8 @@ function renderCockpit() {
     const isInspect = sub === currentSelectedInInspector;
     grid.insertAdjacentHTML('beforeend', `
       <div class="sub-mini-card ${isInspect?'active-inspect':''}" onclick="teleportInspector('${sub}')">
-        <div class="mini-top">
-          <span class="mini-name">${sub}</span>
-          <span class="mini-wt">${wt}% GATE</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:#cbd5e1;">
-          <span>Progress</span><span style="color:#facc15">${score}%</span>
-        </div>
+        <div class="mini-top"><span class="mini-name">${sub}</span><span class="mini-wt">${wt}% GATE</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:#cbd5e1;"><span>Progress</span><span style="color:#facc15">${score}%</span></div>
         <div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${score}%"></div></div>
       </div>
     `);
@@ -470,7 +447,6 @@ function renderCockpit() {
     data: { datasets: [{ data: [finalGateReadiness, 100-finalGateReadiness], backgroundColor: ['#38bdf8', '#1e293b'], borderWidth: 0 }] },
     options: { cutout: '78%', plugins: { tooltip: {enabled: false} } }
   });
-
   renderMatrix();
 }
 
@@ -480,7 +456,6 @@ function renderMatrix() {
   const sub = document.getElementById('matrixSubSelect').value;
   document.getElementById('matrixSubName').innerText = `${sub} Micro Matrix`;
   const tbody = document.getElementById('matrixBody'); tbody.innerHTML = '';
-  
   const chaps = Object.keys(dbHierarchy[sub] || {});
   if(!matrixDb[sub]) matrixDb[sub] = { ticks: {} };
 
@@ -489,7 +464,7 @@ function renderMatrix() {
     let totalSize = 0; chaps.forEach(c => totalSize += Math.max(dbHierarchy[sub][c].length, 1));
     chaps.forEach(c => {
       if(!matrixDb[sub].ticks[c]) matrixDb[sub].ticks[c] = [false,false,false,false,false,false];
-      else if(matrixDb[sub].ticks[c].length === 5) matrixDb[sub].ticks[c].push(false); // SAFE MIGRATION
+      else if(matrixDb[sub].ticks[c].length === 5) matrixDb[sub].ticks[c].push(false);
 
       const t = matrixDb[sub].ticks[c];
       const sz = Math.max(dbHierarchy[sub][c].length, 1);
@@ -508,7 +483,6 @@ function renderMatrix() {
       `);
     });
   }
-
   const subScore = getSubjectScore(sub);
   document.getElementById('matrixPctText').innerText = `${subScore}%`;
   document.getElementById('matrixProgressBar').style.width = `${subScore}%`;
@@ -516,6 +490,7 @@ function renderMatrix() {
 
 function toggleMatrixTick(s, c, col) { matrixDb[s].ticks[c][col] = !matrixDb[s].ticks[c][col]; localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
 
+// REQ 1 UPDATED: CHAPTER EDIT & SAFE RENAME ENGINE
 function renderBuilderUI() {
   const sub = document.getElementById('manageSubjectSelect').value; const cont = document.getElementById('syllabusContainer'); const dl = document.getElementById('chapterList');
   cont.innerHTML = ''; dl.innerHTML = ''; const chaps = dbHierarchy[sub] || {};
@@ -523,13 +498,47 @@ function renderBuilderUI() {
   for(const [cName, tops] of Object.entries(chaps)) {
     dl.appendChild(new Option(cName, cName));
     let pH = tops.map((t, i) => `<div class="pill"><div class="pill-text">${t}</div><div class="pill-actions"><span onclick="editTopic('${sub}','${cName}',${i})" style="color:#38bdf8;">✏️</span><span onclick="delTopic('${sub}','${cName}',${i})" style="color:#ef4444;">✕</span></div></div>`).join('');
-    cont.insertAdjacentHTML('beforeend', `<div class="chapter-block"><h3 class="chapter-title">${cName} <button onclick="delChapter('${sub}','${cName}')">Delete</button></h3><div class="pill-container">${pH||'<span style="font-size:0.8rem; color:#64748b;">No topics</span>'}</div></div>`);
+    cont.insertAdjacentHTML('beforeend', `
+      <div class="chapter-block">
+        <h3 class="chapter-title">
+          <span>${cName}</span>
+          <div style="display:flex; gap:12px;">
+            <button class="btn-icon" onclick="editChapter('${sub}','${cName}')" style="color:#38bdf8;">✏️ Edit</button>
+            <button class="btn-icon" onclick="delChapter('${sub}','${cName}')" style="color:#ef4444;">✕ Delete</button>
+          </div>
+        </h3>
+        <div class="pill-container">${pH||'<span style="font-size:0.8rem; color:#64748b;">No topics</span>'}</div>
+      </div>
+    `);
   }
 }
+
+function editChapter(sub, oldName) {
+  const newName = prompt("Rename Chapter:", oldName);
+  if (!newName || !newName.trim() || newName.trim() === oldName) return;
+  const trimmed = newName.trim();
+  if (dbHierarchy[sub][trimmed]) return alert("A chapter with this name already exists in this subject!");
+
+  dbHierarchy[sub][trimmed] = dbHierarchy[sub][oldName];
+  delete dbHierarchy[sub][oldName];
+  localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy));
+
+  if (matrixDb[sub] && matrixDb[sub].ticks && matrixDb[sub].ticks[oldName]) {
+    matrixDb[sub].ticks[trimmed] = matrixDb[sub].ticks[oldName];
+    delete matrixDb[sub].ticks[oldName];
+    localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb));
+  }
+
+  sessions.forEach(s => { if (s.subject === sub && s.chapter === oldName) s.chapter = trimmed; });
+  localStorage.setItem('studySessions_v4', JSON.stringify(sessions));
+
+  renderBuilderUI(); updateTrackerChapters(); renderCockpit(); updateDashboard();
+}
+
 function addSyllabusNode() { const s = document.getElementById('manageSubjectSelect').value, c = document.getElementById('chapterInput').value.trim(), t = document.getElementById('topicInput').value.trim(); if(!c) return; if(!dbHierarchy[s][c]) dbHierarchy[s][c] = []; if(t && !dbHierarchy[s][c].includes(t)) dbHierarchy[s][c].push(t); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); document.getElementById('topicInput').value = ''; renderBuilderUI(); updateTrackerChapters(); renderCockpit(); }
 function editTopic(s,c,i) { const nt = prompt("Edit topic:", dbHierarchy[s][c][i]); if(nt){ dbHierarchy[s][c][i] = nt.trim(); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters(); renderCockpit(); } }
 function delTopic(s,c,i) { dbHierarchy[s][c].splice(i, 1); localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters(); renderCockpit(); }
-function delChapter(s,c) { if(confirm("Delete?")){ delete dbHierarchy[s][c]; localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); renderBuilderUI(); updateTrackerChapters(); renderCockpit(); } }
+function delChapter(s,c) { if(confirm("Delete chapter?")){ delete dbHierarchy[s][c]; if(matrixDb[s]&&matrixDb[s].ticks) delete matrixDb[s].ticks[c]; localStorage.setItem('syllabusDb_v4', JSON.stringify(dbHierarchy)); localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderBuilderUI(); updateTrackerChapters(); renderCockpit(); } }
 
 function updateTrackerChapters() { const s = document.getElementById('subjectSelect').value, cs = document.getElementById('chapterSelect'); cs.innerHTML = '<option value="General">General</option>'; Object.keys(dbHierarchy[s]||{}).forEach(c=>cs.add(new Option(c,c))); updateTrackerTopics(); }
 function updateTrackerTopics() { const s = document.getElementById('subjectSelect').value, c = document.getElementById('chapterSelect').value, ts = document.getElementById('topicSelect'); ts.innerHTML = '<option value="General">General</option>'; if(c!=='General'&&dbHierarchy[s][c]) dbHierarchy[s][c].forEach(t=>ts.add(new Option(t,t))); }
@@ -590,7 +599,7 @@ function updateDashboard() {
 }
 
 function dlChart(id,n) { const a=document.createElement('a'); a.download=`GATE_${n}.png`; a.href=document.getElementById(id).toDataURL('image/png'); a.click(); }
-function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v45_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v46_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
 function restoreSystem(e) { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const d=JSON.parse(ev.target.result); ['sessions','dailyGoal','tenQData','dbHierarchy','mistakeData','snRevData','matrixDb'].forEach(k=>{if(d[k]) localStorage.setItem(k==='dbHierarchy'?'syllabusDb_v4':k==='sessions'?'studySessions_v4':k==='dailyGoal'?'dailyGoal_v4':k==='tenQData'?'tenQData_v4':k==='mistakeData'?'mistakeData_v4':`${k}_v43`, JSON.stringify(d[k]))}); alert("Restored!"); location.reload(); }catch(err){alert("Invalid file");} }; r.readAsText(f); }
 
 window.onload = initApp;
