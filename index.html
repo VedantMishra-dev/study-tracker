@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.6 (Cockpit Edition)</title>
+<title>Ultimate Study OS v4.7 (Cockpit Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -91,7 +91,6 @@
   
   .backup-bar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 20px 25px; border-radius: 16px; max-width: 1400px; margin: 0 auto 30px auto; border: 1px dashed #475569;}
 
-  /* REQ UPDATED: SUNDAY BANNER THEME */
   .sunday-banner { display: none; background: linear-gradient(90deg, #991b1b, #b45309); color: #fff; padding: 18px 25px; border-radius: 16px; max-width: 1400px; margin: 0 auto 20px auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); border: 2px solid #fef08a;}
   
   .weekly-report-box { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;}
@@ -137,8 +136,8 @@
   </div>
 </div>
 
-<h1>Ultimate Study OS v4.6</h1>
-<div class="subtitle">Cockpit Edition + Smart Chapter Management</div>
+<h1>Ultimate Study OS v4.7</h1>
+<div class="subtitle">Cockpit Edition + Strict Graph Rendering</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
@@ -388,6 +387,7 @@ let currentSession = null, timerInterval = null, charts = {};
 function formatDur(sec) { const h = String(Math.floor(sec/3600)).padStart(2,'0'), m = String(Math.floor((sec%3600)/60)).padStart(2,'0'), s = String(sec%60).padStart(2,'0'); return `${h}:${m}:${s}`; }
 function formatAMPM(d) { let h = d.getHours(), m = d.getMinutes(), ampm = h>=12?'PM':'AM'; h=h%12||12; m=m<10?'0'+m:m; return `${h}:${m} ${ampm}`; }
 function parseDateStr(str) { const p = str.split('/'); return p.length===3 ? new Date(`${p[2]}-${p[1]}-${p[0]}`).getTime() : 0; }
+function formatDateObjToStr(d) { return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; }
 
 function initApp() {
   const selects = [document.getElementById('subjectSelect'), document.getElementById('manageSubjectSelect'), document.getElementById('matrixSubSelect')];
@@ -490,7 +490,6 @@ function renderMatrix() {
 
 function toggleMatrixTick(s, c, col) { matrixDb[s].ticks[c][col] = !matrixDb[s].ticks[c][col]; localStorage.setItem('matrixDb_v43', JSON.stringify(matrixDb)); renderCockpit(); }
 
-// REQ 1 UPDATED: CHAPTER EDIT & SAFE RENAME ENGINE
 function renderBuilderUI() {
   const sub = document.getElementById('manageSubjectSelect').value; const cont = document.getElementById('syllabusContainer'); const dl = document.getElementById('chapterList');
   cont.innerHTML = ''; dl.innerHTML = ''; const chaps = dbHierarchy[sub] || {};
@@ -581,15 +580,46 @@ function updateDashboard() {
   const wg=document.getElementById('weeklyGrid'); wg.innerHTML=''; if(sessions.length){ const st=Math.min(...sessions.map(s=>s.startTime)); let wd={}; sessions.forEach(s=>{ const w=Math.floor((s.startTime-st)/604800000)+1; wd[w]=(wd[w]||0)+s.duration; }); Object.keys(wd).sort((a,b)=>a-b).forEach(w=>wg.insertAdjacentHTML('beforeend',`<div class="week-card"><h3>Week ${w}</h3><p>${Math.floor(wd[w]/3600)}h ${Math.round(((wd[w]/3600)%1)*60)}m</p></div>`)); } else wg.innerHTML='<p>No data</p>';
   document.getElementById('weeklyReportContainer').innerHTML=`<div class="rep-stat"><div class="rep-label">This Week Total</div><div class="rep-num" style="color:#38bdf8;">${wTot.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#f59e0b;"><div class="rep-label">Lectures</div><div class="rep-num">${wLec.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#10b981;"><div class="rep-label">QP / PYQ</div><div class="rep-num">${wPr.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#8b5cf6;"><div class="rep-label">Revision</div><div class="rep-num">${wRv.toFixed(1)}h</div></div>`;
 
-  const sd=Object.keys(dD).sort((a,b)=>parseDateStr(a)-parseDateStr(b)), l7=sd.slice(-7);
-  if(charts.d) charts.d.destroy(); charts.d = new Chart(document.getElementById('dailyChart'), { type:'bar', data:{ labels:l7, datasets:[{ label:'Hours', data:l7.map(d=>dD[d]), backgroundColor:'#38bdf8', borderRadius:4 }] }, options:{ plugins:{ title:{display:true, text:'Output Trend'} } } });
-  if(charts.q) charts.q.destroy(); charts.q = new Chart(document.getElementById('q10Chart'), { type:'bar', data:{ labels:l7, datasets:[{ label:'Subjects w/ 10Q', data:l7.map(d=>{ let c=0; if(tenQData[d]) Object.values(tenQData[d]).forEach(v=>{if(v)c++}); return c; }), backgroundColor:'#10b981', borderRadius:4 }] }, options:{ plugins:{ title:{display:true, text:'10Q Consistency'} }, scales:{y:{beginAtZero:true, suggestedMax:3}} } });
+  // REQ FIX: CONTINUOUS DATE GENERATION FOR ZERO-HOUR DROPS
+  const sd=Object.keys(dD).sort((a,b)=>parseDateStr(a)-parseDateStr(b));
+  let l7D = [], l7V = [], allDates = [], allVals = [], goalVals = [];
+  
+  if (sd.length > 0) {
+    const firstDate = new Date(parseDateStr(sd[0]));
+    const lastDate = new Date(parseDateStr(sd[sd.length - 1]));
+    let iterDate = new Date(firstDate);
+    
+    while(iterDate <= lastDate) {
+      const dStr = formatDateObjToStr(iterDate);
+      allDates.push(dStr);
+      allVals.push(dD[dStr] || 0);
+      goalVals.push(dailyGoal);
+      iterDate.setDate(iterDate.getDate() + 1);
+    }
+    l7D = allDates.slice(-7);
+    l7V = allVals.slice(-7);
+  }
+
+  if(charts.d) charts.d.destroy(); charts.d = new Chart(document.getElementById('dailyChart'), { type:'bar', data:{ labels:l7D, datasets:[{ label:'Hours', data:l7V, backgroundColor:'#38bdf8', borderRadius:4 }] }, options:{ plugins:{ title:{display:true, text:'Output Trend'} } } });
+  if(charts.q) charts.q.destroy(); charts.q = new Chart(document.getElementById('q10Chart'), { type:'bar', data:{ labels:l7D, datasets:[{ label:'Subjects w/ 10Q', data:l7D.map(d=>{ let c=0; if(tenQData[d]) Object.values(tenQData[d]).forEach(v=>{if(v)c++}); return c; }), backgroundColor:'#10b981', borderRadius:4 }] }, options:{ plugins:{ title:{display:true, text:'10Q Consistency'} }, scales:{y:{beginAtZero:true, suggestedMax:3}} } });
   if(charts.s) charts.s.destroy(); charts.s = new Chart(document.getElementById('subjectChart'), { type:'pie', data:{ labels:Object.keys(sD), datasets:[{ data:Object.values(sD), backgroundColor:['#f43f5e','#8b5cf6','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6'] }] }, options:{ plugins:{ title:{display:true, text:'Syllabus Hours'} } } });
   if(charts.a) charts.a.destroy(); charts.a = new Chart(document.getElementById('activityChart'), { type:'doughnut', data:{ labels:Object.keys(aD), datasets:[{ data:Object.values(aD), backgroundColor:['#10b981','#3b82f6','#64748b','#facc15'] }] }, options:{ cutout:'60%', plugins:{ title:{display:true, text:'Quality'} } } });
   
   const tc=Object.entries(cD).sort((a,b)=>b[1]-a[1]).slice(0,15);
   if(charts.c) charts.c.destroy(); charts.c = new Chart(document.getElementById('chapterAnalyticsChart'), { type:'bar', data:{ labels:tc.map(i=>i[0]), datasets:[{ data:tc.map(i=>i[1].toFixed(2)), backgroundColor:'#8b5cf6', borderRadius:4 }] }, options:{ indexAxis:'y', plugins:{legend:{display:false}} } });
-  if(charts.lt) charts.lt.destroy(); charts.lt = new Chart(document.getElementById('longTermChart'), { type:'line', data:{ labels:sd, datasets:[{ label:'Actual', data:sd.map(d=>dD[d]), borderColor:'#00ffd5', backgroundColor:'rgba(0,255,213,0.1)', borderWidth:2, tension:0.4 }, { label:'Goal', data:sd.map(d=>dailyGoal), borderColor:'#facc15', borderWidth:2, tension:0.4 }] }, options:{ responsive:true, maintainAspectRatio:false } });
+  
+  if(charts.lt) charts.lt.destroy(); 
+  charts.lt = new Chart(document.getElementById('longTermChart'), { 
+    type:'line', 
+    data:{ 
+      labels:allDates, 
+      datasets:[
+        { label:'Actual', data:allVals, borderColor:'#00ffd5', backgroundColor:'rgba(0,255,213,0.1)', borderWidth:2, tension:0.4 }, 
+        { label:'Goal', data:goalVals, borderColor:'#facc15', borderWidth:2, tension:0.4 }
+      ] 
+    }, 
+    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{beginAtZero:true, suggestedMax: dailyGoal+2} } } 
+  });
 
   const fda=Date.now()-(14*86400000); let aSc=0, pSc=0, rec=new Set();
   sessions.forEach(s=>{ if(s.startTime>=fda){ rec.add(s.subject); if(s.activity==='Practice'||s.activity==='Test') aSc+=s.duration; else pSc+=s.duration; } });
@@ -599,7 +629,7 @@ function updateDashboard() {
 }
 
 function dlChart(id,n) { const a=document.createElement('a'); a.download=`GATE_${n}.png`; a.href=document.getElementById(id).toDataURL('image/png'); a.click(); }
-function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v46_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v47_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
 function restoreSystem(e) { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const d=JSON.parse(ev.target.result); ['sessions','dailyGoal','tenQData','dbHierarchy','mistakeData','snRevData','matrixDb'].forEach(k=>{if(d[k]) localStorage.setItem(k==='dbHierarchy'?'syllabusDb_v4':k==='sessions'?'studySessions_v4':k==='dailyGoal'?'dailyGoal_v4':k==='tenQData'?'tenQData_v4':k==='mistakeData'?'mistakeData_v4':`${k}_v43`, JSON.stringify(d[k]))}); alert("Restored!"); location.reload(); }catch(err){alert("Invalid file");} }; r.readAsText(f); }
 
 window.onload = initApp;
