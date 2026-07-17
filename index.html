@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.7 (Cockpit Edition)</title>
+<title>Ultimate Study OS v4.8 (Cockpit Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -12,7 +12,7 @@
   .subtitle { text-align: center; color: #94a3b8; margin-bottom: 25px; font-size: 1.1rem; }
   
   .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; max-width: 1400px; margin: 0 auto 20px auto; }
-  .panel { background: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); max-width: 1400px; margin: 0 auto 20px auto; }
+  .panel { background: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); max-width: 1400px; margin: 0 auto 20px auto; display: flex; flex-direction: column; }
   
   .control-group { margin-bottom: 15px; }
   label { display: block; margin-bottom: 5px; color: #cbd5e1; font-weight: bold; font-size: 0.9rem; }
@@ -73,7 +73,7 @@
 
   table { width: 100%; border-collapse: collapse; margin-top: 15px; }
   th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; font-size: 0.9rem;}
-  th { background: #0f172a; color: #38bdf8; }
+  th { background: #0f172a; color: #38bdf8; position: sticky; top: 0; z-index: 2;}
   tr:hover { background: #334155; }
   .del-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
 
@@ -121,8 +121,13 @@
   .mini-bar-bg { background: #334155; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 6px;}
   .mini-bar-fill { height: 100%; background: #10b981; transition: width 0.4s;}
 
+  .ratio-container { display: flex; gap: 20px; align-items: center; border-top: 1px dashed #475569; padding-top: 20px; margin-top: auto; }
+  .ratio-chart-wrapper { width: 140px; height: 140px; flex-shrink: 0; position: relative;}
+  .ratio-table-wrapper { flex: 1; max-height: 140px; overflow-y: auto; background: #0f172a; border-radius: 8px; border: 1px solid #334155;}
+  .ratio-table-wrapper::-webkit-scrollbar { width: 6px; } .ratio-table-wrapper::-webkit-scrollbar-track { background: #0f172a; } .ratio-table-wrapper::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
   @media (max-width: 900px) { .cockpit-macro { flex-direction: column; } .cockpit-gauge { margin: 0 auto; } }
-  @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } }
+  @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar, .ratio-container { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } .ratio-chart-wrapper{margin: 0 auto;} }
 </style>
 </head>
 <body>
@@ -136,8 +141,8 @@
   </div>
 </div>
 
-<h1>Ultimate Study OS v4.7</h1>
-<div class="subtitle">Cockpit Edition + Strict Graph Rendering</div>
+<h1>Ultimate Study OS v4.8</h1>
+<div class="subtitle">Cockpit Edition + Live Active/Passive Daily Monitor</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
@@ -177,7 +182,29 @@
         <button class="btn-small" onclick="addSyllabusNode()">+ Add</button>
       </div>
     </div>
-    <div id="syllabusContainer" style="margin-top: 20px; max-height: 350px; overflow-y: auto; padding-right: 10px;"></div>
+    <div id="syllabusContainer" style="margin-top: 10px; max-height: 220px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;"></div>
+    
+    <!-- NEW MODULE: SELF STUDY VS LECTURE TRACKER -->
+    <div class="ratio-container">
+      <div class="ratio-chart-wrapper">
+        <canvas id="dailyRatioChart"></canvas>
+      </div>
+      <div style="flex:1;">
+        <h3 style="margin:0 0 10px 0; color:#38bdf8; font-size:1rem;">Daily Log (Self-Study vs Lecture)</h3>
+        <div class="ratio-table-wrapper">
+          <table style="margin-top:0;">
+            <thead>
+              <tr>
+                <th style="padding: 8px;">Date</th>
+                <th style="padding: 8px;">Self-Study</th>
+                <th style="padding: 8px;">Lec</th>
+              </tr>
+            </thead>
+            <tbody id="dailyRatioHistoryBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -565,7 +592,7 @@ function delSession(id) { if(confirm("Del?")){ sessions=sessions.filter(s=>s.id!
 Chart.defaults.color = '#cbd5e1'; Chart.defaults.maintainAspectRatio = false;
 function updateDashboard() {
   const tb = document.getElementById('historyTableBody'); tb.innerHTML=''; const srt = [...sessions].sort((a,b)=>b.startTime-a.startTime);
-  let ts=0, tdStr=new Date().toLocaleDateString('en-GB'), dD={}, sD={}, aD={}, cD={};
+  let ts=0, tdStr=new Date().toLocaleDateString('en-GB'), dD={}, sD={}, aD={}, cD={}, dayStats={};
   const now=new Date(), sow=new Date(now.setDate(now.getDate()-now.getDay())).setHours(0,0,0,0); let wTot=0, wLec=0, wPr=0, wRv=0;
 
   srt.forEach(s => {
@@ -574,13 +601,17 @@ function updateDashboard() {
     const h = s.duration/3600; dD[s.dateStr]=(dD[s.dateStr]||0)+h; sD[s.subject]=(sD[s.subject]||0)+h; aD[s.activity]=(aD[s.activity]||0)+h;
     if(s.chapter&&s.chapter!=='General') cD[`${s.subject}: ${s.chapter}`]=(cD[`${s.subject}: ${s.chapter}`]||0)+h;
     if(s.startTime>=sow){ wTot+=h; if(s.activity==='Class') wLec+=h; else if(s.activity==='Practice'||s.activity==='Test') wPr+=h; else if(s.activity==='Revision') wRv+=h; }
+    
+    // Day Stats Compilation for New Module
+    if(!dayStats[s.dateStr]) dayStats[s.dateStr] = { self: 0, lec: 0 };
+    if(s.activity === 'Class') dayStats[s.dateStr].lec += h;
+    else dayStats[s.dateStr].self += h;
   });
 
   const th=ts/3600, pct=Math.min((th/dailyGoal)*100, 100); document.getElementById('todayLogged').innerText=`Today: ${Math.floor(th)}h ${Math.floor((th%1)*60)}m`; document.getElementById('goalPercent').innerText=`${Math.round(pct)}%`; document.getElementById('goalProgressBar').style.width=`${pct}%`;
   const wg=document.getElementById('weeklyGrid'); wg.innerHTML=''; if(sessions.length){ const st=Math.min(...sessions.map(s=>s.startTime)); let wd={}; sessions.forEach(s=>{ const w=Math.floor((s.startTime-st)/604800000)+1; wd[w]=(wd[w]||0)+s.duration; }); Object.keys(wd).sort((a,b)=>a-b).forEach(w=>wg.insertAdjacentHTML('beforeend',`<div class="week-card"><h3>Week ${w}</h3><p>${Math.floor(wd[w]/3600)}h ${Math.round(((wd[w]/3600)%1)*60)}m</p></div>`)); } else wg.innerHTML='<p>No data</p>';
   document.getElementById('weeklyReportContainer').innerHTML=`<div class="rep-stat"><div class="rep-label">This Week Total</div><div class="rep-num" style="color:#38bdf8;">${wTot.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#f59e0b;"><div class="rep-label">Lectures</div><div class="rep-num">${wLec.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#10b981;"><div class="rep-label">QP / PYQ</div><div class="rep-num">${wPr.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#8b5cf6;"><div class="rep-label">Revision</div><div class="rep-num">${wRv.toFixed(1)}h</div></div>`;
 
-  // REQ FIX: CONTINUOUS DATE GENERATION FOR ZERO-HOUR DROPS
   const sd=Object.keys(dD).sort((a,b)=>parseDateStr(a)-parseDateStr(b));
   let l7D = [], l7V = [], allDates = [], allVals = [], goalVals = [];
   
@@ -626,10 +657,50 @@ function updateDashboard() {
   const tSc=aSc+pSc, aRt=tSc>0?Math.round((aSc/tSc)*100):0, rtEl=document.getElementById('lagRatioText'), rsEl=document.getElementById('lagRatioSub');
   rtEl.innerText=`${aRt}% Active`; if(tSc===0){ rtEl.className='lag-val'; rsEl.innerText="No data logged in 14 days."; } else if(aRt<40){ rtEl.className='lag-val badge-warn'; rsEl.innerText="⚠️ Passive Trap: Read less, solve more."; } else { rtEl.className='lag-val badge-good'; rsEl.innerText="🟢 Solid execution ratio!"; }
   const gh=GATE_SUBJECTS.filter(s=>!rec.has(s)), ghEl=document.getElementById('ghostSubjectsContainer'); ghEl.innerHTML = gh.length?gh.map(g=>`<span class="ghost-tag">👻 ${g}</span>`).join(''):'<span style="color:#34d399">None!</span>';
+
+  // NEW MODULE LOGIC: DAILY RATIO CHART & HISTORY TABLE
+  const tStats = dayStats[tdStr] || {self: 0, lec: 0};
+  const hasDataToday = (tStats.self > 0 || tStats.lec > 0);
+
+  if(charts.dr) charts.dr.destroy();
+  charts.dr = new Chart(document.getElementById('dailyRatioChart'), {
+    type: 'doughnut',
+    data: { 
+      labels: hasDataToday ? ['Self-Study', 'Lectures'] : ['No Data Today'], 
+      datasets: [{ 
+        data: hasDataToday ? [tStats.self, tStats.lec] : [1], 
+        backgroundColor: hasDataToday ? ['#10b981', '#f59e0b'] : ['#334155'],
+        borderWidth: 0
+      }] 
+    },
+    options: { 
+      cutout: '70%', maintainAspectRatio: false, 
+      plugins: { 
+        legend: { position: 'bottom', labels: {color: '#cbd5e1', font: {size: 11}, boxWidth: 12} },
+        tooltip: { enabled: hasDataToday }
+      } 
+    }
+  });
+
+  const dhBody = document.getElementById('dailyRatioHistoryBody'); 
+  dhBody.innerHTML = '';
+  if(Object.keys(dayStats).length === 0) {
+    dhBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#64748b;">No data yet. Start tracking!</td></tr>';
+  } else {
+    Object.keys(dayStats).sort((a,b)=>parseDateStr(b)-parseDateStr(a)).forEach(d => {
+      dhBody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td style="padding: 8px;">${d===tdStr?'<strong style="color:#38bdf8;">Today</strong>':d}</td>
+          <td style="color:#10b981; font-weight:bold; padding: 8px;">${dayStats[d].self.toFixed(1)}h</td>
+          <td style="color:#f59e0b; font-weight:bold; padding: 8px;">${dayStats[d].lec.toFixed(1)}h</td>
+        </tr>
+      `);
+    });
+  }
 }
 
 function dlChart(id,n) { const a=document.createElement('a'); a.download=`GATE_${n}.png`; a.href=document.getElementById(id).toDataURL('image/png'); a.click(); }
-function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v47_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v48_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
 function restoreSystem(e) { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const d=JSON.parse(ev.target.result); ['sessions','dailyGoal','tenQData','dbHierarchy','mistakeData','snRevData','matrixDb'].forEach(k=>{if(d[k]) localStorage.setItem(k==='dbHierarchy'?'syllabusDb_v4':k==='sessions'?'studySessions_v4':k==='dailyGoal'?'dailyGoal_v4':k==='tenQData'?'tenQData_v4':k==='mistakeData'?'mistakeData_v4':`${k}_v43`, JSON.stringify(d[k]))}); alert("Restored!"); location.reload(); }catch(err){alert("Invalid file");} }; r.readAsText(f); }
 
 window.onload = initApp;
