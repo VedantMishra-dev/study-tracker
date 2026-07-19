@@ -126,10 +126,11 @@
   .ratio-table-wrapper { flex: 1; max-height: 140px; overflow-y: auto; background: #0f172a; border-radius: 8px; border: 1px solid #334155;}
   .ratio-table-wrapper::-webkit-scrollbar { width: 6px; } .ratio-table-wrapper::-webkit-scrollbar-track { background: #0f172a; } .ratio-table-wrapper::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
 
-  /* New Styling for the Blunders Panel */
+  /* Styling for the Blunders Panel */
   .blunder-panel { border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
   .blunder-list { margin: 10px 0; padding-left: 20px; color: #cbd5e1; line-height: 1.6; font-size: 0.95rem; }
-  .blunder-list li { margin-bottom: 8px; }
+  .blunder-list li { margin-bottom: 12px; }
+  .highlight-shana { color: #facc15; font-weight: bold; }
 
   @media (max-width: 900px) { .cockpit-macro { flex-direction: column; } .cockpit-gauge { margin: 0 auto; } }
   @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar, .ratio-container { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } .ratio-chart-wrapper{margin: 0 auto;} }
@@ -189,7 +190,6 @@
     </div>
     <div id="syllabusContainer" style="margin-top: 10px; max-height: 220px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;"></div>
     
-    <!-- NEW MODULE: SELF STUDY VS LECTURE TRACKER -->
     <div class="ratio-container">
       <div class="ratio-chart-wrapper">
         <canvas id="dailyRatioChart"></canvas>
@@ -366,6 +366,25 @@
   <div class="weekly-report-box" id="weeklyReportContainer"></div>
 </div>
 
+<!-- MOVED: BLUNDERS AND MISTAKES PANEL ABOVE SESSION LOG -->
+<div class="panel blunder-panel">
+  <h2 style="margin-top:0; color:#ef4444;">🚨 SHANA's GATE 2027 Commandment & Blunder List</h2>
+  <p style="font-size: 0.9rem; color:#94a3b8; margin-top: -5px;">A live log of the harsh truths and specific blunders to never repeat. Unlocked for Ajeya.</p>
+  
+  <ul class="blunder-list">
+    <li><strong class="highlight-shana">The Ultimate Truth (Ranks):</strong> Ranks are built purely through vigorous <strong>Question Practice</strong> (PYQs and Workbooks). They are NEVER built by passively binge-watching lecture after lecture.</li>
+    <li><strong>The Passive Trap:</strong> Watching a 2-hour lecture and tricking yourself into thinking you "know" the concept without immediately solving 15-20 questions to prove it.</li>
+    <li><strong>Short Notes Neglect:</strong> Moving on to the next chapter without distilling the current one into 2-3 highly condensed pages. If it's not in your short notes, it won't be in your brain in January.</li>
+    <li><strong>Revision Decay (The Silent Killer):</strong> Letting older subjects rot. If you don't use Active Recall on old short notes weekly, you will effectively start from zero when December arrives.</li>
+    <li><strong>Mock Test Phobia & Blindness:</strong> Giving tests but running away from the analysis out of fear or laziness. Analyzing a 3-hour mock should take 3 hours. Root cause your mistakes (Silly vs. Conceptual vs. Memory).</li>
+    <li><strong>Calculation & Reading Errors:</strong> Misreading "NOT correct", messing up basic arithmetic on the virtual calculator, or ignoring units (e.g., milli vs. micro).</li>
+    <li><strong class="highlight-shana">Consistency Over Intensity:</strong> Hitting 3 hours every single day will always beat doing 14 hours one day and 0 for the next three days. Show up daily.</li>
+  </ul>
+  
+  <textarea id="blunderLogInput" rows="5" placeholder="Log your personal, specific blunders from recent study sessions or mock tests here... (e.g. 'Messed up the Nyquist rate formula because I didn't revise my short notes')"></textarea>
+  <button class="btn-small" style="margin-top:12px; background:#ef4444; color:#fff; font-size: 1rem; padding: 12px;" onclick="saveBlunders()">💾 Save Personal Blunders</button>
+</div>
+
 <div class="panel">
   <h2 style="margin-top:0; color:#fff;">Session History Log</h2>
   <div style="overflow-x: auto;">
@@ -374,22 +393,6 @@
       <tbody id="historyTableBody"></tbody>
     </table>
   </div>
-</div>
-
-<!-- NEW BLUNDERS AND MISTAKES PANEL -->
-<div class="panel blunder-panel">
-  <h2 style="margin-top:0; color:#ef4444;">🚨 Things to Remember & Past Blunders</h2>
-  <p style="font-size: 0.9rem; color:#94a3b8; margin-top: -5px;">A live log of all the mistakes discussed earlier so they are never repeated.</p>
-  
-  <ul class="blunder-list">
-    <li><strong>Passive Trap:</strong> Spending too much time watching lectures without active problem-solving and application.</li>
-    <li><strong>Skipping Short Notes:</strong> Failing to make or revise short notes immediately after completing a chapter.</li>
-    <li><strong>Ignoring Mistakes:</strong> Taking tests but not analyzing the root causes of errors.</li>
-    <li><strong>Inconsistent Revision:</strong> Letting old subjects decay instead of performing regular active recall.</li>
-  </ul>
-  
-  <textarea id="blunderLogInput" rows="6" placeholder="Log down specific blunders you've made during tests or practice sessions here... (e.g. 'Silly calculation error in EMT because I rushed the formula')"></textarea>
-  <button class="btn-small" style="margin-top:12px; background:#ef4444; color:#fff; font-size: 1rem; padding: 12px;" onclick="saveBlunders()">💾 Save Blunder Log</button>
 </div>
 
 <div class="backup-bar">
@@ -450,7 +453,7 @@ function initApp() {
 function saveBlunders() {
   const txt = document.getElementById('blunderLogInput').value;
   localStorage.setItem('blunders_v4', txt);
-  alert("Blunder log saved successfully!");
+  alert("Personal blunder log saved successfully!");
 }
 
 function checkSunday() { if(new Date().getDay() === 0) document.getElementById('sundayBanner').style.display = 'block'; }
@@ -622,23 +625,44 @@ Chart.defaults.color = '#cbd5e1'; Chart.defaults.maintainAspectRatio = false;
 function updateDashboard() {
   const tb = document.getElementById('historyTableBody'); tb.innerHTML=''; const srt = [...sessions].sort((a,b)=>b.startTime-a.startTime);
   let ts=0, tdStr=new Date().toLocaleDateString('en-GB'), dD={}, sD={}, aD={}, cD={}, dayStats={};
-  const now=new Date(), sow=new Date(now.setDate(now.getDate()-now.getDay())).setHours(0,0,0,0); let wTot=0, wLec=0, wPr=0, wRv=0;
+  const now = new Date(), sow = new Date(now.setDate(now.getDate()-now.getDay())).setHours(0,0,0,0); 
+  let wTot=0, wLec=0, wPr=0, wRv=0;
 
   srt.forEach(s => {
     if(s.dateStr===tdStr) ts+=s.duration;
     tb.insertAdjacentHTML('beforeend', `<tr><td>${s.dateStr}</td><td>${s.isManual?"Manual":formatAMPM(new Date(s.startTime))}</td><td><strong>${s.subject}</strong></td><td>${s.chapter} <small style="color:#facc15">➔ ${s.topic}</small></td><td>${s.activity}</td><td>${Math.round(s.duration/60)}m</td><td><button class="del-btn" onclick="delSession(${s.id})">Del</button></td></tr>`);
     const h = s.duration/3600; dD[s.dateStr]=(dD[s.dateStr]||0)+h; sD[s.subject]=(sD[s.subject]||0)+h; aD[s.activity]=(aD[s.activity]||0)+h;
     if(s.chapter&&s.chapter!=='General') cD[`${s.subject}: ${s.chapter}`]=(cD[`${s.subject}: ${s.chapter}`]||0)+h;
+    
     if(s.startTime>=sow){ wTot+=h; if(s.activity==='Class') wLec+=h; else if(s.activity==='Practice'||s.activity==='Test') wPr+=h; else if(s.activity==='Revision') wRv+=h; }
     
-    // Day Stats Compilation for New Module
     if(!dayStats[s.dateStr]) dayStats[s.dateStr] = { self: 0, lec: 0 };
     if(s.activity === 'Class') dayStats[s.dateStr].lec += h;
     else dayStats[s.dateStr].self += h;
   });
 
-  const th=ts/3600, pct=Math.min((th/dailyGoal)*100, 100); document.getElementById('todayLogged').innerText=`Today: ${Math.floor(th)}h ${Math.floor((th%1)*60)}m`; document.getElementById('goalPercent').innerText=`${Math.round(pct)}%`; document.getElementById('goalProgressBar').style.width=`${pct}%`;
-  const wg=document.getElementById('weeklyGrid'); wg.innerHTML=''; if(sessions.length){ const st=Math.min(...sessions.map(s=>s.startTime)); let wd={}; sessions.forEach(s=>{ const w=Math.floor((s.startTime-st)/604800000)+1; wd[w]=(wd[w]||0)+s.duration; }); Object.keys(wd).sort((a,b)=>a-b).forEach(w=>wg.insertAdjacentHTML('beforeend',`<div class="week-card"><h3>Week ${w}</h3><p>${Math.floor(wd[w]/3600)}h ${Math.round(((wd[w]/3600)%1)*60)}m</p></div>`)); } else wg.innerHTML='<p>No data</p>';
+  const th=ts/3600, pct=Math.min((th/dailyGoal)*100, 100); 
+  document.getElementById('todayLogged').innerText=`Today: ${Math.floor(th)}h ${Math.floor((th%1)*60)}m`; 
+  document.getElementById('goalPercent').innerText=`${Math.round(pct)}%`; 
+  document.getElementById('goalProgressBar').style.width=`${pct}%`;
+  
+  const wg=document.getElementById('weeklyGrid'); wg.innerHTML=''; 
+  if(sessions.length){ 
+    const firstSessionTime = Math.min(...sessions.map(s=>s.startTime)); 
+    const firstDate = new Date(firstSessionTime);
+    const baseStartOfWeek = new Date(firstDate.setDate(firstDate.getDate() - firstDate.getDay())).setHours(0,0,0,0);
+    
+    let wd={}; 
+    sessions.forEach(s=>{ 
+      const w=Math.floor((s.startTime-baseStartOfWeek)/604800000)+1; 
+      wd[w]=(wd[w]||0)+s.duration; 
+    }); 
+    
+    Object.keys(wd).sort((a,b)=>a-b).forEach(w=>wg.insertAdjacentHTML('beforeend',`<div class="week-card"><h3>Week ${w}</h3><p>${Math.floor(wd[w]/3600)}h ${Math.round(((wd[w]/3600)%1)*60)}m</p></div>`)); 
+  } else {
+    wg.innerHTML='<p>No data</p>';
+  }
+  
   document.getElementById('weeklyReportContainer').innerHTML=`<div class="rep-stat"><div class="rep-label">This Week Total</div><div class="rep-num" style="color:#38bdf8;">${wTot.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#f59e0b;"><div class="rep-label">Lectures</div><div class="rep-num">${wLec.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#10b981;"><div class="rep-label">QP / PYQ</div><div class="rep-num">${wPr.toFixed(1)}h</div></div><div class="rep-stat" style="border-color:#8b5cf6;"><div class="rep-label">Revision</div><div class="rep-num">${wRv.toFixed(1)}h</div></div>`;
 
   const sd=Object.keys(dD).sort((a,b)=>parseDateStr(a)-parseDateStr(b));
@@ -687,7 +711,6 @@ function updateDashboard() {
   rtEl.innerText=`${aRt}% Active`; if(tSc===0){ rtEl.className='lag-val'; rsEl.innerText="No data logged in 14 days."; } else if(aRt<40){ rtEl.className='lag-val badge-warn'; rsEl.innerText="⚠️ Passive Trap: Read less, solve more."; } else { rtEl.className='lag-val badge-good'; rsEl.innerText="🟢 Solid execution ratio!"; }
   const gh=GATE_SUBJECTS.filter(s=>!rec.has(s)), ghEl=document.getElementById('ghostSubjectsContainer'); ghEl.innerHTML = gh.length?gh.map(g=>`<span class="ghost-tag">👻 ${g}</span>`).join(''):'<span style="color:#34d399">None!</span>';
 
-  // NEW MODULE LOGIC: DAILY RATIO CHART & HISTORY TABLE
   const tStats = dayStats[tdStr] || {self: 0, lec: 0};
   const hasDataToday = (tStats.self > 0 || tStats.lec > 0);
 
