@@ -16,7 +16,7 @@
   
   .control-group { margin-bottom: 15px; }
   label { display: block; margin-bottom: 5px; color: #cbd5e1; font-weight: bold; font-size: 0.9rem; }
-  select, input[type="text"], input[type="number"], input[type="date"] { 
+  select, input[type="text"], input[type="number"], input[type="date"], textarea { 
     width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 1rem; box-sizing: border-box;
   }
   
@@ -125,6 +125,11 @@
   .ratio-chart-wrapper { width: 140px; height: 140px; flex-shrink: 0; position: relative;}
   .ratio-table-wrapper { flex: 1; max-height: 140px; overflow-y: auto; background: #0f172a; border-radius: 8px; border: 1px solid #334155;}
   .ratio-table-wrapper::-webkit-scrollbar { width: 6px; } .ratio-table-wrapper::-webkit-scrollbar-track { background: #0f172a; } .ratio-table-wrapper::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+  /* New Styling for the Blunders Panel */
+  .blunder-panel { border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
+  .blunder-list { margin: 10px 0; padding-left: 20px; color: #cbd5e1; line-height: 1.6; font-size: 0.95rem; }
+  .blunder-list li { margin-bottom: 8px; }
 
   @media (max-width: 900px) { .cockpit-macro { flex-direction: column; } .cockpit-gauge { margin: 0 auto; } }
   @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar, .ratio-container { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } .ratio-chart-wrapper{margin: 0 auto;} }
@@ -293,14 +298,14 @@
 </div>
 
 <div class="panel">
-  <h2 style="margin-top:0; color:#facc15; margin-bottom:15px;">🎯 Master GATE 2027 Cockpit (Live Readiness)</h2>
+  <h2 style="margin-top:0; color:#facc15; margin-bottom:15px;">🎯 Master Cockpit (Live Readiness)</h2>
   
   <div class="cockpit-macro">
     <div class="cockpit-gauge">
       <canvas id="gateReadyChart"></canvas>
       <div class="gauge-text-overlay">
         <h3 id="trueGateScoreText">0%</h3>
-        <span>GATE Ready</span>
+        <span>Mastery Ready</span>
       </div>
     </div>
     <div class="cockpit-grid" id="cockpitGrid"></div>
@@ -371,6 +376,22 @@
   </div>
 </div>
 
+<!-- NEW BLUNDERS AND MISTAKES PANEL -->
+<div class="panel blunder-panel">
+  <h2 style="margin-top:0; color:#ef4444;">🚨 Things to Remember & Past Blunders</h2>
+  <p style="font-size: 0.9rem; color:#94a3b8; margin-top: -5px;">A live log of all the mistakes discussed earlier so they are never repeated.</p>
+  
+  <ul class="blunder-list">
+    <li><strong>Passive Trap:</strong> Spending too much time watching lectures without active problem-solving and application.</li>
+    <li><strong>Skipping Short Notes:</strong> Failing to make or revise short notes immediately after completing a chapter.</li>
+    <li><strong>Ignoring Mistakes:</strong> Taking tests but not analyzing the root causes of errors.</li>
+    <li><strong>Inconsistent Revision:</strong> Letting old subjects decay instead of performing regular active recall.</li>
+  </ul>
+  
+  <textarea id="blunderLogInput" rows="6" placeholder="Log down specific blunders you've made during tests or practice sessions here... (e.g. 'Silly calculation error in EMT because I rushed the formula')"></textarea>
+  <button class="btn-small" style="margin-top:12px; background:#ef4444; color:#fff; font-size: 1rem; padding: 12px;" onclick="saveBlunders()">💾 Save Blunder Log</button>
+</div>
+
 <div class="backup-bar">
   <div>
     <h3 style="margin:0; color:#facc15; font-size:1.05rem;">🛡️ Database Safe-Guard</h3>
@@ -399,6 +420,7 @@ let dbHierarchy = JSON.parse(localStorage.getItem('syllabusDb_v4')) || {};
 let mistakeData = JSON.parse(localStorage.getItem('mistakeData_v4')) || {}; 
 let snRevData = JSON.parse(localStorage.getItem('snRevData_v43')) || {};
 let matrixDb = JSON.parse(localStorage.getItem('matrixDb_v43')) || {};
+let savedBlunders = localStorage.getItem('blunders_v4') || "";
 
 GATE_SUBJECTS.forEach(sub => { 
   if(!dbHierarchy[sub]) dbHierarchy[sub] = {}; 
@@ -408,6 +430,7 @@ GATE_SUBJECTS.forEach(sub => {
 document.getElementById('dailyGoalInput').value = dailyGoal;
 document.getElementById('manDate').valueAsDate = new Date();
 document.getElementById('ritualDate').valueAsDate = new Date();
+document.getElementById('blunderLogInput').value = savedBlunders;
 
 let currentSession = null, timerInterval = null, charts = {};
 
@@ -422,6 +445,12 @@ function initApp() {
   
   checkSunday();
   renderBuilderUI(); updateTrackerChapters(); renderDailyRituals(); renderCockpit(); updateDashboard();
+}
+
+function saveBlunders() {
+  const txt = document.getElementById('blunderLogInput').value;
+  localStorage.setItem('blunders_v4', txt);
+  alert("Blunder log saved successfully!");
 }
 
 function checkSunday() { if(new Date().getDay() === 0) document.getElementById('sundayBanner').style.display = 'block'; }
@@ -458,7 +487,7 @@ function renderCockpit() {
     const isInspect = sub === currentSelectedInInspector;
     grid.insertAdjacentHTML('beforeend', `
       <div class="sub-mini-card ${isInspect?'active-inspect':''}" onclick="teleportInspector('${sub}')">
-        <div class="mini-top"><span class="mini-name">${sub}</span><span class="mini-wt">${wt}% GATE</span></div>
+        <div class="mini-top"><span class="mini-name">${sub}</span><span class="mini-wt">${wt}% Weight</span></div>
         <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:#cbd5e1;"><span>Progress</span><span style="color:#facc15">${score}%</span></div>
         <div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${score}%"></div></div>
       </div>
@@ -699,8 +728,8 @@ function updateDashboard() {
   }
 }
 
-function dlChart(id,n) { const a=document.createElement('a'); a.download=`GATE_${n}.png`; a.href=document.getElementById(id).toDataURL('image/png'); a.click(); }
-function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`GATE_OS_v48_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function dlChart(id,n) { const a=document.createElement('a'); a.download=`Mastery_${n}.png`; a.href=document.getElementById(id).toDataURL('image/png'); a.click(); }
+function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`Mastery_OS_v48_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
 function restoreSystem(e) { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const d=JSON.parse(ev.target.result); ['sessions','dailyGoal','tenQData','dbHierarchy','mistakeData','snRevData','matrixDb'].forEach(k=>{if(d[k]) localStorage.setItem(k==='dbHierarchy'?'syllabusDb_v4':k==='sessions'?'studySessions_v4':k==='dailyGoal'?'dailyGoal_v4':k==='tenQData'?'tenQData_v4':k==='mistakeData'?'mistakeData_v4':`${k}_v43`, JSON.stringify(d[k]))}); alert("Restored!"); location.reload(); }catch(err){alert("Invalid file");} }; r.readAsText(f); }
 
 window.onload = initApp;
