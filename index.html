@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Study OS v4.8 (Cockpit Edition)</title>
+<title>Ultimate Study OS v4.9 (Cockpit Edition)</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -16,7 +16,7 @@
   
   .control-group { margin-bottom: 15px; }
   label { display: block; margin-bottom: 5px; color: #cbd5e1; font-weight: bold; font-size: 0.9rem; }
-  select, input[type="text"], input[type="number"], input[type="date"], textarea { 
+  select, input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea { 
     width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 1rem; box-sizing: border-box;
   }
   
@@ -77,7 +77,8 @@
   tr:hover { background: #334155; }
   .del-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
 
-  #manualEntryForm { display: none; margin-top: 15px; padding: 15px; background: #0f172a; border-radius: 12px; border: 1px dashed #475569; }
+  #manualEntryForm { display: none; margin-top: 15px; padding: 15px; background: #1e293b; border-radius: 12px; border: 1px dashed #38bdf8; }
+  .manual-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;}
   
   .lag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;}
   .lag-box { background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;}
@@ -126,14 +127,13 @@
   .ratio-table-wrapper { flex: 1; max-height: 140px; overflow-y: auto; background: #0f172a; border-radius: 8px; border: 1px solid #334155;}
   .ratio-table-wrapper::-webkit-scrollbar { width: 6px; } .ratio-table-wrapper::-webkit-scrollbar-track { background: #0f172a; } .ratio-table-wrapper::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
 
-  /* Styling for the Blunders Panel */
   .blunder-panel { border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
   .blunder-list { margin: 10px 0; padding-left: 20px; color: #cbd5e1; line-height: 1.6; font-size: 0.95rem; }
   .blunder-list li { margin-bottom: 12px; }
   .highlight-shana { color: #facc15; font-weight: bold; }
 
   @media (max-width: 900px) { .cockpit-macro { flex-direction: column; } .cockpit-gauge { margin: 0 auto; } }
-  @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar, .ratio-container { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } .ratio-chart-wrapper{margin: 0 auto;} }
+  @media (max-width: 768px) { .dashboard-grid, .builder-row, .lag-grid, .backup-bar, .ratio-container, .manual-grid { flex-direction: column; display:flex; gap:15px; } .dashboard-grid { grid-template-columns: 1fr; } .ritual-block { flex-direction: column; gap: 15px; text-align: center; } .ritual-text { margin-right: 0; } .ratio-chart-wrapper{margin: 0 auto;} }
 </style>
 </head>
 <body>
@@ -147,8 +147,8 @@
   </div>
 </div>
 
-<h1>Ultimate Study OS v4.8</h1>
-<div class="subtitle">Cockpit Edition + Live Active/Passive Daily Monitor</div>
+<h1>Ultimate Study OS v4.9</h1>
+<div class="subtitle">Cockpit Edition + AI Export Engine + Precision Tracking</div>
 
 <div class="dashboard-grid">
   <div class="panel" style="margin-bottom: 0;">
@@ -231,12 +231,18 @@
     </div>
     <div class="control-group">
       <label>Activity</label>
-      <select id="activitySelect">
-        <option value="Practice">Question Practice / PYQ</option>
+      <select id="activitySelect" onchange="toggleQCountInput()">
+        <option value="Practice - PYQ">Practice: PYQs</option>
+        <option value="Practice - DPP">Practice: DPP / Workbook</option>
+        <option value="Practice - Class">Practice: Class Notes Questions</option>
         <option value="Revision">Slide / Notes Revision</option>
         <option value="Class">Class / Lecture</option>
         <option value="Test">Mock Test</option>
       </select>
+    </div>
+    <div class="control-group" id="qCountGroup">
+      <label style="color:#facc15;">Questions Solved (Enter before hitting stop)</label>
+      <input type="number" id="qCountInput" placeholder="e.g., 25">
     </div>
     
     <div class="timer-display" id="timerDisplay">00:00:00</div>
@@ -246,9 +252,12 @@
     
     <button class="btn-main btn-manual" onclick="toggleManualEntry()">➕ Forgot Timer? Add Manually</button>
     <div id="manualEntryForm">
-      <p style="font-size: 0.85rem; color:#94a3b8;">Uses the Subject, Chapter, Topic & Activity selected above.</p>
-      <div class="control-group"><label>Date</label><input type="date" id="manDate"></div>
-      <div class="control-group"><label>Duration (in minutes)</label><input type="number" id="manMins" placeholder="e.g., 90"></div>
+      <p style="font-size: 0.85rem; color:#94a3b8; margin-top:0;">Uses Subject, Chapter, Topic & Activity selected above.</p>
+      <div class="manual-grid">
+        <div class="control-group"><label>Date</label><input type="date" id="manDate"></div>
+        <div class="control-group"><label>Start Time</label><input type="time" id="manTime"></div>
+        <div class="control-group"><label>Duration (mins)</label><input type="number" id="manMins" placeholder="e.g., 45"></div>
+      </div>
       <button class="btn-main btn-start" style="padding: 10px;" onclick="addManualSession()">Save Manual Log</button>
     </div>
 
@@ -366,7 +375,6 @@
   <div class="weekly-report-box" id="weeklyReportContainer"></div>
 </div>
 
-<!-- MOVED: BLUNDERS AND MISTAKES PANEL ABOVE SESSION LOG -->
 <div class="panel blunder-panel">
   <h2 style="margin-top:0; color:#ef4444;">🚨 SHANA's GATE 2027 Commandment & Blunder List</h2>
   <p style="font-size: 0.9rem; color:#94a3b8; margin-top: -5px;">A live log of the harsh truths and specific blunders to never repeat. Unlocked for Ajeya.</p>
@@ -381,7 +389,7 @@
     <li><strong class="highlight-shana">Consistency Over Intensity:</strong> Hitting 3 hours every single day will always beat doing 14 hours one day and 0 for the next three days. Show up daily.</li>
   </ul>
   
-  <textarea id="blunderLogInput" rows="5" placeholder="Log your personal, specific blunders from recent study sessions or mock tests here... (e.g. 'Messed up the Nyquist rate formula because I didn't revise my short notes')"></textarea>
+  <textarea id="blunderLogInput" rows="5" placeholder="Log your personal, specific blunders from recent study sessions or mock tests here..."></textarea>
   <button class="btn-small" style="margin-top:12px; background:#ef4444; color:#fff; font-size: 1rem; padding: 12px;" onclick="saveBlunders()">💾 Save Personal Blunders</button>
 </div>
 
@@ -389,7 +397,7 @@
   <h2 style="margin-top:0; color:#fff;">Session History Log</h2>
   <div style="overflow-x: auto;">
     <table>
-      <thead><tr><th>Date</th><th>Time</th><th>Subject</th><th>Chapter ➔ Topic</th><th>Activity</th><th>Dur.</th><th>Action</th></tr></thead>
+      <thead><tr><th>Date</th><th>Timing</th><th>Subject</th><th>Chapter ➔ Topic</th><th>Activity</th><th>Q's</th><th>Dur.</th><th>Action</th></tr></thead>
       <tbody id="historyTableBody"></tbody>
     </table>
   </div>
@@ -397,13 +405,15 @@
 
 <div class="backup-bar">
   <div>
-    <h3 style="margin:0; color:#facc15; font-size:1.05rem;">🛡️ Database Safe-Guard</h3>
-    <p style="margin:4px 0 0 0; font-size:0.85rem; color:#94a3b8;">Browser cache clearing wipes localStorage. Download a backup file weekly!</p>
+    <h3 style="margin:0; color:#facc15; font-size:1.05rem;">🛡️ Database Safe-Guard & AI Sync</h3>
+    <p style="margin:4px 0 0 0; font-size:0.85rem; color:#94a3b8;">Export your database weekly. Use the AI button to get your personal analysis prompt.</p>
   </div>
-  <div style="display:flex; gap:10px;">
+  <div style="display:flex; gap:10px; align-items:center;">
+    <button class="btn-small" style="background:#8b5cf6; color:#fff; font-size:1rem; padding: 10px 15px;" onclick="exportForAI()">🤖 Copy Data for AI Analysis</button>
+    <div style="border-left: 1px solid #475569; height: 30px; margin: 0 5px;"></div>
     <input type="file" id="importFileEl" style="display:none" onchange="restoreSystem(event)" accept=".json">
-    <button class="btn-small" style="background:#475569; color:#fff;" onclick="document.getElementById('importFileEl').click()">📤 Restore Backup</button>
-    <button class="btn-small" style="background:#facc15;" onclick="backupSystem()">📥 Export Database (.json)</button>
+    <button class="btn-small" style="background:#475569; color:#fff;" onclick="document.getElementById('importFileEl').click()">📤 Restore</button>
+    <button class="btn-small" style="background:#facc15;" onclick="backupSystem()">📥 Export (.json)</button>
   </div>
 </div>
 
@@ -446,7 +456,7 @@ function initApp() {
   const selects = [document.getElementById('subjectSelect'), document.getElementById('manageSubjectSelect'), document.getElementById('matrixSubSelect')];
   selects.forEach(sel => { sel.innerHTML = ''; GATE_SUBJECTS.forEach(sub => sel.add(new Option(sub, sub))); });
   
-  checkSunday();
+  checkSunday(); toggleQCountInput();
   renderBuilderUI(); updateTrackerChapters(); renderDailyRituals(); renderCockpit(); updateDashboard();
 }
 
@@ -457,6 +467,11 @@ function saveBlunders() {
 }
 
 function checkSunday() { if(new Date().getDay() === 0) document.getElementById('sundayBanner').style.display = 'block'; }
+
+function toggleQCountInput() {
+  const act = document.getElementById('activitySelect').value;
+  document.getElementById('qCountGroup').style.display = act.includes('Practice') ? 'block' : 'none';
+}
 
 function getSubjectScore(sub) {
   const chaps = Object.keys(dbHierarchy[sub] || {});
@@ -614,10 +629,79 @@ function renderDailyRituals() {
 }
 function toggleMistakeTick() { const dv = document.getElementById('ritualDate').value; if(!dv) return; const [y,m,d] = dv.split('-'); mistakeData[`${d}/${m}/${y}`] = !mistakeData[`${d}/${m}/${y}`]; localStorage.setItem('mistakeData_v4',JSON.stringify(mistakeData)); renderDailyRituals(); }
 
-function startSession() { currentSession = { id: Date.now(), subject: document.getElementById('subjectSelect').value, chapter: document.getElementById('chapterSelect').value, topic: document.getElementById('topicSelect').value, activity: document.getElementById('activitySelect').value, startTime: Date.now(), dateStr: new Date().toLocaleDateString('en-GB') }; ['startBtn','subjectSelect','chapterSelect','topicSelect'].forEach(id=>document.getElementById(id).style.display=id==='startBtn'?'none':''); ['subjectSelect','chapterSelect','topicSelect'].forEach(id=>document.getElementById(id).disabled=true); document.getElementById('stopBtn').style.display='block'; timerInterval = setInterval(()=>document.getElementById('timerDisplay').innerText=formatDur(Math.floor((Date.now()-currentSession.startTime)/1000)), 1000); }
-function stopSession() { clearInterval(timerInterval); const dur = Math.floor((Date.now()-currentSession.startTime)/1000); if(dur>10){ currentSession.endTime=Date.now(); currentSession.duration=dur; sessions.push(currentSession); localStorage.setItem('studySessions_v4',JSON.stringify(sessions)); } currentSession=null; document.getElementById('timerDisplay').innerText="00:00:00"; document.getElementById('startBtn').style.display='block'; document.getElementById('stopBtn').style.display='none'; ['subjectSelect','chapterSelect','topicSelect'].forEach(id=>document.getElementById(id).disabled=false); updateDashboard(); }
+function startSession() { 
+  currentSession = { 
+    id: Date.now(), 
+    subject: document.getElementById('subjectSelect').value, 
+    chapter: document.getElementById('chapterSelect').value, 
+    topic: document.getElementById('topicSelect').value, 
+    activity: document.getElementById('activitySelect').value, 
+    startTime: Date.now(), 
+    dateStr: new Date().toLocaleDateString('en-GB') 
+  }; 
+  ['startBtn','subjectSelect','chapterSelect','topicSelect','activitySelect'].forEach(id=>document.getElementById(id).style.display=id==='startBtn'?'none':''); 
+  ['subjectSelect','chapterSelect','topicSelect','activitySelect'].forEach(id=>document.getElementById(id).disabled=true); 
+  document.getElementById('stopBtn').style.display='block'; 
+  timerInterval = setInterval(()=>document.getElementById('timerDisplay').innerText=formatDur(Math.floor((Date.now()-currentSession.startTime)/1000)), 1000); 
+}
+
+function stopSession() { 
+  clearInterval(timerInterval); 
+  const dur = Math.floor((Date.now()-currentSession.startTime)/1000); 
+  if(dur>10){ 
+    currentSession.endTime = Date.now(); 
+    currentSession.duration = dur; 
+    currentSession.qCount = parseInt(document.getElementById('qCountInput').value) || null;
+    sessions.push(currentSession); 
+    localStorage.setItem('studySessions_v4',JSON.stringify(sessions)); 
+  } 
+  currentSession = null; 
+  document.getElementById('timerDisplay').innerText="00:00:00"; 
+  document.getElementById('qCountInput').value = "";
+  document.getElementById('startBtn').style.display='block'; 
+  document.getElementById('stopBtn').style.display='none'; 
+  ['subjectSelect','chapterSelect','topicSelect','activitySelect'].forEach(id=>{
+    document.getElementById(id).style.display='';
+    document.getElementById(id).disabled=false;
+  }); 
+  updateDashboard(); 
+}
+
 function toggleManualEntry() { const f = document.getElementById('manualEntryForm'); f.style.display = f.style.display==='block'?'none':'block'; }
-function addManualSession() { const dv = document.getElementById('manDate').value, m = parseInt(document.getElementById('manMins').value); if(!dv||isNaN(m)||m<=0) return; const [y,mo,d]=dv.split('-'), ft=new Date(y,mo-1,d,12,0,0).getTime(); sessions.push({ id:Date.now(), subject:document.getElementById('subjectSelect').value, chapter:document.getElementById('chapterSelect').value, topic:document.getElementById('topicSelect').value, activity:document.getElementById('activitySelect').value, startTime:ft, endTime:ft+(m*60000), duration:m*60, dateStr:`${d}/${mo}/${y}`, isManual:true }); localStorage.setItem('studySessions_v4',JSON.stringify(sessions)); document.getElementById('manMins').value=''; toggleManualEntry(); updateDashboard(); }
+
+function addManualSession() { 
+  const dv = document.getElementById('manDate').value;
+  const tm = document.getElementById('manTime').value;
+  const m = parseInt(document.getElementById('manMins').value); 
+  if(!dv||isNaN(m)||m<=0) return; 
+  
+  const [y,mo,d] = dv.split('-'); 
+  let ft = new Date(y,mo-1,d,12,0,0).getTime();
+  if(tm) {
+    const [hh, mm] = tm.split(':');
+    ft = new Date(y,mo-1,d,hh,mm,0).getTime();
+  }
+
+  sessions.push({ 
+    id: Date.now(), 
+    subject: document.getElementById('subjectSelect').value, 
+    chapter: document.getElementById('chapterSelect').value, 
+    topic: document.getElementById('topicSelect').value, 
+    activity: document.getElementById('activitySelect').value, 
+    qCount: parseInt(document.getElementById('qCountInput').value) || null,
+    startTime: ft, 
+    endTime: ft+(m*60000), 
+    duration: m*60, 
+    dateStr: `${d}/${mo}/${y}`, 
+    isManual: true 
+  }); 
+  localStorage.setItem('studySessions_v4',JSON.stringify(sessions)); 
+  document.getElementById('manMins').value=''; 
+  document.getElementById('qCountInput').value='';
+  toggleManualEntry(); 
+  updateDashboard(); 
+}
+
 function updateGoal() { dailyGoal = parseFloat(document.getElementById('dailyGoalInput').value)||6; localStorage.setItem('dailyGoal_v4',dailyGoal); updateDashboard(); }
 function delSession(id) { if(confirm("Del?")){ sessions=sessions.filter(s=>s.id!==id); localStorage.setItem('studySessions_v4',JSON.stringify(sessions)); updateDashboard(); } }
 
@@ -630,11 +714,22 @@ function updateDashboard() {
 
   srt.forEach(s => {
     if(s.dateStr===tdStr) ts+=s.duration;
-    tb.insertAdjacentHTML('beforeend', `<tr><td>${s.dateStr}</td><td>${s.isManual?"Manual":formatAMPM(new Date(s.startTime))}</td><td><strong>${s.subject}</strong></td><td>${s.chapter} <small style="color:#facc15">➔ ${s.topic}</small></td><td>${s.activity}</td><td>${Math.round(s.duration/60)}m</td><td><button class="del-btn" onclick="delSession(${s.id})">Del</button></td></tr>`);
+    
+    // Create Timing String
+    let timingStr = "";
+    if(s.isManual && !s.endTime) {
+       timingStr = formatAMPM(new Date(s.startTime));
+    } else if (s.endTime) {
+       timingStr = `${formatAMPM(new Date(s.startTime))} - ${formatAMPM(new Date(s.endTime))}`;
+    } else {
+       timingStr = formatAMPM(new Date(s.startTime));
+    }
+    
+    tb.insertAdjacentHTML('beforeend', `<tr><td>${s.dateStr}</td><td><small style="color:#94a3b8;">${timingStr}</small></td><td><strong>${s.subject}</strong></td><td>${s.chapter} <small style="color:#facc15">➔ ${s.topic}</small></td><td>${s.activity}</td><td><strong style="color:#38bdf8;">${s.qCount||'-'}</strong></td><td>${Math.round(s.duration/60)}m</td><td><button class="del-btn" onclick="delSession(${s.id})">Del</button></td></tr>`);
     const h = s.duration/3600; dD[s.dateStr]=(dD[s.dateStr]||0)+h; sD[s.subject]=(sD[s.subject]||0)+h; aD[s.activity]=(aD[s.activity]||0)+h;
     if(s.chapter&&s.chapter!=='General') cD[`${s.subject}: ${s.chapter}`]=(cD[`${s.subject}: ${s.chapter}`]||0)+h;
     
-    if(s.startTime>=sow){ wTot+=h; if(s.activity==='Class') wLec+=h; else if(s.activity==='Practice'||s.activity==='Test') wPr+=h; else if(s.activity==='Revision') wRv+=h; }
+    if(s.startTime>=sow){ wTot+=h; if(s.activity==='Class') wLec+=h; else if(s.activity.includes('Practice')||s.activity==='Test') wPr+=h; else if(s.activity==='Revision') wRv+=h; }
     
     if(!dayStats[s.dateStr]) dayStats[s.dateStr] = { self: 0, lec: 0 };
     if(s.activity === 'Class') dayStats[s.dateStr].lec += h;
@@ -706,7 +801,7 @@ function updateDashboard() {
   });
 
   const fda=Date.now()-(14*86400000); let aSc=0, pSc=0, rec=new Set();
-  sessions.forEach(s=>{ if(s.startTime>=fda){ rec.add(s.subject); if(s.activity==='Practice'||s.activity==='Test') aSc+=s.duration; else pSc+=s.duration; } });
+  sessions.forEach(s=>{ if(s.startTime>=fda){ rec.add(s.subject); if(s.activity.includes('Practice')||s.activity==='Test') aSc+=s.duration; else pSc+=s.duration; } });
   const tSc=aSc+pSc, aRt=tSc>0?Math.round((aSc/tSc)*100):0, rtEl=document.getElementById('lagRatioText'), rsEl=document.getElementById('lagRatioSub');
   rtEl.innerText=`${aRt}% Active`; if(tSc===0){ rtEl.className='lag-val'; rsEl.innerText="No data logged in 14 days."; } else if(aRt<40){ rtEl.className='lag-val badge-warn'; rsEl.innerText="⚠️ Passive Trap: Read less, solve more."; } else { rtEl.className='lag-val badge-good'; rsEl.innerText="🟢 Solid execution ratio!"; }
   const gh=GATE_SUBJECTS.filter(s=>!rec.has(s)), ghEl=document.getElementById('ghostSubjectsContainer'); ghEl.innerHTML = gh.length?gh.map(g=>`<span class="ghost-tag">👻 ${g}</span>`).join(''):'<span style="color:#34d399">None!</span>';
@@ -751,9 +846,43 @@ function updateDashboard() {
   }
 }
 
+// AI EXPORT ENGINE
+function exportForAI() {
+  const fda = Date.now() - (7 * 86400000);
+  const l7 = sessions.filter(s => s.startTime >= fda).sort((a,b)=>b.startTime-a.startTime);
+  
+  let tHr = 0, lecHr = 0, pPracHr = 0, pQ = 0, dppHr = 0, dppQ = 0, cnHr = 0, cnQ = 0, revHr = 0;
+  
+  l7.forEach(s => {
+    const h = s.duration / 3600;
+    tHr += h;
+    if(s.activity === 'Class') lecHr += h;
+    else if(s.activity === 'Practice - PYQ') { pPracHr += h; pQ += (s.qCount || 0); }
+    else if(s.activity === 'Practice - DPP') { dppHr += h; dppQ += (s.qCount || 0); }
+    else if(s.activity === 'Practice - Class') { cnHr += h; cnQ += (s.qCount || 0); }
+    else if(s.activity === 'Revision') revHr += h;
+  });
+
+  let dump = `Here is my data for the last 7 days. I have an internship 2 days a week, leaving a 2-day gap. Analyze my routine, sequence, and output.\n\n`;
+  dump += `Total Logged: ${tHr.toFixed(1)} hrs\n`;
+  dump += `Lectures: ${lecHr.toFixed(1)} hrs\n`;
+  dump += `PYQ Practice: ${pPracHr.toFixed(1)} hrs (${pQ} Qs)\n`;
+  dump += `DPP Practice: ${dppHr.toFixed(1)} hrs (${dppQ} Qs)\n`;
+  dump += `Class Notes Practice: ${cnHr.toFixed(1)} hrs (${cnQ} Qs)\n`;
+  dump += `Revision: ${revHr.toFixed(1)} hrs\n\n`;
+  
+  dump += `SESSION LOG (LATEST FIRST):\n`;
+  l7.forEach(s => {
+    dump += `[${s.dateStr}] ${s.activity} | ${s.subject} (${s.chapter}) | ${Math.round(s.duration/60)}m | ${s.qCount ? s.qCount + ' Qs' : '-'}\n`;
+  });
+
+  navigator.clipboard.writeText(dump);
+  alert("Data copied to clipboard! Paste it directly into the chat for SHANA to analyze.");
+}
+
 function dlChart(id,n) { const a=document.createElement('a'); a.download=`Mastery_${n}.png`; a.href=document.getElementById(id).toDataURL('image/png'); a.click(); }
-function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`Mastery_OS_v48_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
-function restoreSystem(e) { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const d=JSON.parse(ev.target.result); ['sessions','dailyGoal','tenQData','dbHierarchy','mistakeData','snRevData','matrixDb'].forEach(k=>{if(d[k]) localStorage.setItem(k==='dbHierarchy'?'syllabusDb_v4':k==='sessions'?'studySessions_v4':k==='dailyGoal'?'dailyGoal_v4':k==='tenQData'?'tenQData_v4':k==='mistakeData'?'mistakeData_v4':`${k}_v43`, JSON.stringify(d[k]))}); alert("Restored!"); location.reload(); }catch(err){alert("Invalid file");} }; r.readAsText(f); }
+function backupSystem() { const b=new Blob([JSON.stringify({sessions,dailyGoal,tenQData,dbHierarchy,mistakeData,snRevData,matrixDb,savedBlunders})],{type:"application/json"}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`Mastery_OS_v49_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function restoreSystem(e) { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const d=JSON.parse(ev.target.result); ['sessions','dailyGoal','tenQData','dbHierarchy','mistakeData','snRevData','matrixDb','savedBlunders'].forEach(k=>{if(d[k]) localStorage.setItem(k==='dbHierarchy'?'syllabusDb_v4':k==='sessions'?'studySessions_v4':k==='dailyGoal'?'dailyGoal_v4':k==='tenQData'?'tenQData_v4':k==='mistakeData'?'mistakeData_v4':k==='savedBlunders'?'blunders_v4':`${k}_v43`, k==='savedBlunders'||k==='dailyGoal'?d[k]:JSON.stringify(d[k]))}); alert("Restored!"); location.reload(); }catch(err){alert("Invalid file");} }; r.readAsText(f); }
 
 window.onload = initApp;
 </script>
